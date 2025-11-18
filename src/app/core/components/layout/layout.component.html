@@ -1,1 +1,58 @@
-<p>layout works!</p>
+<div class="layout-container">
+  
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="/assets/logo.png" alt="Logo Taqueando" class="navbar-logo">
+      <h3>Taqueando - Sistema de Gestión</h3>
+    </div>
+    <div class="navbar-right">
+      <span>Bienvenido, {{ userRole }}</span>
+      <button (click)="logout()" class="logout-button">
+        Cerrar Sesión
+      </button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    
+    <aside class="sidenav">
+      <nav>
+        <ul>
+          <li>
+            <a routerLink="/app/dashboard" routerLinkActive="active">
+              Dashboard
+            </a>
+          </li>
+          
+          <li>
+            <a routerLink="/app/ventas/registrar" routerLinkActive="active">
+              Registrar Venta
+            </a>
+          </li>
+          <li>
+            <a routerLink="/app/inventario/registrar" routerLinkActive="active">
+              Registrar Inventario
+            </a>
+          </li>
+
+          <li *ngIf="userRole === 'admin' || userRole === 'operaciones'">
+            <a routerLink="/app/pedidos" routerLinkActive="active">
+              Gestión de Pedidos
+            </a>
+          </li>
+
+          <li *ngIf="userRole === 'admin'">
+            <a routerLink="/app/admin/usuarios" routerLinkActive="active">
+              Gestión de Usuarios
+            </a>
+          </li>
+          </ul>
+      </nav>
+    </aside>
+
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+</div>

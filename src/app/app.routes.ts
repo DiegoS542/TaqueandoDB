@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
     // --- RUTAS PÚBLICAS ---
@@ -18,6 +19,12 @@ export const routes: Routes = [
       { 
         path: 'dashboard', 
         loadComponent: () => import('./dashboardModule/dashboard/dashboard.component').then(m => m.DashboardComponent) 
+      },
+      // Rutas de Admin (protegidas por el adminGuard)
+      { 
+        path: 'admin/usuarios', 
+        loadComponent: () => import('./adminModule/gestion-usuarios/gestion-usuarios.component').then(m => m.GestionUsuariosComponent),
+        canActivate: [adminGuard] //DOBLE PROTECCIÓN: solo admin puede entrar aquí
       },
       // Redirección por defecto dentro de 'app'
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
