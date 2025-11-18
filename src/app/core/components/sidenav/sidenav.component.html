@@ -1,0 +1,61 @@
+<aside class="sidenav-container">
+  <nav class="sidenav-nav">
+    <ul class="nav-list">
+
+      <li *ngIf="usuario">
+        <a routerLink="/app/dashboard" routerLinkActive="active">
+          <span class="nav-text">Tablero</span>
+        </a>
+      </li>
+      <li *ngIf="usuario">
+        <a routerLink="/app/ventas" routerLinkActive="active">
+          <span class="nav-text">Ventas</span>
+        </a>
+      </li>
+      <li *ngIf="usuario">
+        <a routerLink="/app/inventario" routerLinkActive="active">
+          <span class="nav-text">Inventario</span>
+        </a>
+      </li>
+
+      <li *ngIf="usuario && (usuario.rol === 'operaciones' || usuario.rol === 'admin')">
+        <a routerLink="/app/pedidos" routerLinkActive="active">
+          <span class="nav-text">Pedidos</span>
+        </a>
+      </li>
+
+      <ng-container *ngIf="usuario && usuario.rol === 'admin'">
+
+        <li class="nav-separator"></li>
+        <li class="nav-header">ADMINISTRACIÓN</li>
+        
+        <li>
+          <a routerLink="/app/admin/usuarios" routerLinkActive="active">
+            <span class="nav-text">Usuarios</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/app/admin/productos" routerLinkActive="active">
+            <span class="nav-text">Productos</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/app/admin/insumos" routerLinkActive="active">
+            <span class="nav-text">Insumos</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/app/admin/proveedores" routerLinkActive="active">
+            <span class="nav-text">Proveedores</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/app/admin/sucursales" routerLinkActive="active">
+            <span class="nav-text">Sucursales</span>
+          </a>
+        </li>
+      </ng-container>
+
+    </ul>
+  </nav>
+</aside>

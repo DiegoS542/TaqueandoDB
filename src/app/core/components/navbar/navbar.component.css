@@ -1,0 +1,66 @@
+/* src/app/core/components/layout/navbar/navbar.component.css */
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between; /* Empuja los elementos a los extremos */
+  align-items: center;
+  
+  /* Usamos las variables globales */
+  background-color: var(--secondary-dark);
+  color: var(--text-light);
+  
+  padding: 12px 24px; /* 12px arriba/abajo, 24px izquierda/derecha */
+  
+  /* Sombra sutil para darle profundidad */
+  box-shadow: 0 4px 12px var(--shadow-color);
+  
+  /* Fija el navbar en la parte superior */
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Asegura que esté por encima de otro contenido */
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Espacio entre el logo y el título */
+}
+
+.navbar-logo {
+  height: 40px; /* Ajusta la altura del logo */
+  width: auto;
+}
+
+.navbar-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Espacio entre el nombre y el botón */
+}
+
+.navbar-username {
+  font-size: 0.9em;
+  color: #ccc; /* Un gris un poco más apagado */
+}
+
+.logout-button {
+  background-color: var(--accent-color);
+  color: var(--text-light);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #581681; /* Un morado más oscuro (versión estática de darken()) */
+}

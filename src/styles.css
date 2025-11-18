@@ -1,1 +1,28 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.css */
+
+/* :root se refiere al elemento raíz de tu aplicación (el <html>).
+   Las variables definidas aquí son globales y se pueden usar en 
+   cualquier otro archivo CSS de tu proyecto. */
+:root {
+  --primary-dark: #1a1a1a;
+  --secondary-dark: #2c2c2c;
+  --text-light: #f0f0f0;
+  --accent-color: #6a1b9a;
+  --error-color: #e53935;
+  --border-color: #444;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* También es una buena práctica poner estilos globales aquí, 
+   como el color de fondo base y la fuente para toda la app. */
+body {
+  margin: 0; /* Resetea el margen por defecto del navegador */
+  font-family: 'Arial', sans-serif;
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+}
+
+/* Un reseteo de 'box-sizing' es casi siempre una buena idea */
+* {
+  box-sizing: border-box;
+}

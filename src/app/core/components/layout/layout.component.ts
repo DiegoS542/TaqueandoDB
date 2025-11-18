@@ -2,27 +2,20 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router'; // Importar
 import { AuthService } from '../../services/auth.service';
+import { NavbarComponent } from '../navbar/navbar.component';
+import { SidenavComponent } from '../sidenav/sidenav.component';
 
 @Component({
   selector: 'app-layout',
   imports: [
-    CommonModule,
-    RouterOutlet, 
-    RouterLink, 
-    RouterLinkActive
+    NavbarComponent,
+    SidenavComponent,
+    RouterOutlet
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css'
 })
 export class LayoutComponent {
-  // Exponemos el rol para usarlo en el HTML
-  userRole: 'admin' | 'operaciones' | 'gerente' | null;
-
-  constructor(private authService: AuthService) { 
-    this.userRole = this.authService.getUserRole();
-  }
-
-  logout() {
-    this.authService.logout();
-  }
+ 
+  constructor() {}
 }

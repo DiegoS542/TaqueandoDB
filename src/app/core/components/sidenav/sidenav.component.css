@@ -1,0 +1,77 @@
+/* src/app/core/components/layout/sidenav/sidenav.component.css */
+
+/* Altura asumida de tu navbar (ajusta si es diferente) */
+:host {
+  --navbar-height: 64px; 
+}
+
+.sidenav-container {
+  position: fixed;
+  top: var(--navbar-height); /* Se posiciona justo debajo del navbar */
+  left: 0;
+  bottom: 0;
+  
+  width: 240px; /* Ancho del menú lateral */
+  background-color: var(--secondary-dark);
+  
+  /* Sombra sutil a la derecha para separarlo del contenido */
+  box-shadow: 4px 0 12px var(--shadow-color);
+  
+  padding-top: 20px;
+  z-index: 999; /* Se asegura que esté por encima del contenido pero debajo del navbar */
+}
+
+.sidenav-nav {
+  width: 100%;
+}
+
+.nav-list {
+  padding: 0;
+  margin: 0;
+  list-style-type: none; /* Quita los puntos de la lista */
+}
+
+/* Estilo para los enlaces <a> */
+.nav-list a {
+  display: flex;
+  align-items: center;
+  padding: 14px 24px;
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 1em;
+  font-weight: 500;
+  transition: background-color 0.2s ease, border-left-color 0.2s ease;
+
+  /* Borde transparente para mantener el espacio */
+  border-left: 4px solid transparent; 
+}
+
+/* Efecto al pasar el mouse */
+.nav-list a:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Estilo para el enlace de la página ACTIVA */
+.nav-list a.active {
+  background-color: rgba(106, 27, 154, 0.15); /* Fondo con acento (morado-transparente) */
+  color: #fff;
+  font-weight: 700;
+  border-left: 4px solid var(--accent-color); /* Línea morada a la izquierda */
+}
+
+/* Estilo para el separador (línea) */
+.nav-separator {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 16px 24px;
+}
+
+/* Estilo para el título de la sección "ADMINISTRACIÓN" */
+.nav-header {
+  padding: 8px 24px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #999; /* Un gris más claro */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

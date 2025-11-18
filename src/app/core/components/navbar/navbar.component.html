@@ -1,0 +1,19 @@
+<header class="navbar-container">
+  
+  <div class="navbar-left">
+    <img src="logo.png" alt="Logo Taqueando" class="navbar-logo">
+    <span class="navbar-title">Sistema de Gestión</span>
+  </div>
+
+  <div class="navbar-right">
+    
+    <span *ngIf="usuario" class="navbar-username">
+      Bienvenido, {{ usuario.nombre }}
+    </span>
+
+    <button (click)="logout()" class="logout-button">
+      Cerrar Sesión
+    </button>
+  </div>
+
+</header>

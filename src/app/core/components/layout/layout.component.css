@@ -1,0 +1,36 @@
+/* src/app/core/components/layout/layout.component.css */
+
+/* Asumiremos los anchos y altos que definimos
+  en los componentes de navbar y sidenav.
+*/
+:host {
+  --navbar-height: 64px;
+  --sidenav-width: 240px;
+}
+
+/* El contenedor principal que está debajo del navbar */
+.main-container {
+  display: flex;
+  /* Empieza después del navbar */
+  padding-top: var(--navbar-height); 
+}
+
+/* El área de contenido donde se renderizan las vistas */
+.content-area {
+  flex-grow: 1; /* Hace que ocupe todo el espacio restante */
+  
+  /* DEJA EL ESPACIO PARA EL SIDENAV.
+    Este "margen" es lo que empuja tu contenido
+    hacia la derecha para que no quede debajo del menú.
+  */
+  margin-left: var(--sidenav-width);
+  
+  /* Un poco de padding interno para que el contenido no esté pegado */
+  padding: 24px;
+  
+  /* Esto se asegura de que ocupe el resto de la altura */
+  min-height: calc(100vh - var(--navbar-height));
+  
+  /* El fondo de tu área de contenido (puedes cambiarlo) */
+  background-color: var(--primary-dark); 
+}

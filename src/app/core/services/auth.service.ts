@@ -3,12 +3,15 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, tap } from 'rxjs';
+import { Usuario } from '../../shared/models/usuario.model';
 
 const API_URL = 'http://localhost:3000/api/auth';
 
 // Interfaz para el payload de nuestro token
 interface AuthTokenPayload {
   usuario_id: number;
+  username: string;
+  nombre: string; 
   rol: 'admin' | 'operaciones' | 'gerente';
   sucursal_id: number | null;
   iat: number; // "Issued at" (fecha de creación)
@@ -20,7 +23,13 @@ interface AuthTokenPayload {
 })
 export class AuthService {
 
-  constructor(private http: HttpClient, private router: Router) { }
+  // Aquí guardamos el estado del usuario logueado
+  private currentUser: Usuario | null = null;
+  
+  constructor(private http: HttpClient, private router: Router) { 
+    // Al cargar el servicio, intenta rehidratar al usuario desde el token guardado
+    this.loadUserFromToken();
+  }
 
   //Llama al endpoint de login en el backend
   public login(username: string, password: string): Observable<{token: string}> {
@@ -28,6 +37,8 @@ export class AuthService {
       tap(response => {
         // Si el login es exitoso, guarda el token en el almacenamiento local
         localStorage.setItem('authToken', response.token);
+        // Al hacer login, decodifica y guarda al usuario
+        this.decodeAndSetUser(response.token);
       })
     );
   }
@@ -35,6 +46,7 @@ export class AuthService {
   //Cierra la sesión del ususario
   logout(): void {
     localStorage.removeItem('authToken');
+    this.currentUser = null;
     this.router.navigate(['/login']);
   }
 
@@ -45,16 +57,19 @@ export class AuthService {
 
   //Revisa si hay un token, para saber si está atuenticado
   isAuthenticated(): boolean {
-    const token = this.getToken();
-    if (!token) {
-      return false;
-    }
-    return true;
+    return this.currentUser !== null;
   }
 
-  /**
-   * Decodifica el token guardado y devuelve el payload
-   */
+  //Devuelve el objeto Usuario completo
+  public getCurrentUser(): Usuario | null {
+    return this.currentUser;
+  }
+  //Devuelve solo el rol
+  getUserRole(): 'admin' | 'operaciones' | 'gerente' | null {
+    return this.currentUser ? this.currentUser.rol : null;
+  }
+
+  //Decodifica el token guardado y devuelve el payload
   private getDecodedToken(): AuthTokenPayload | null {
     const token = this.getToken();
     if (!token) {
@@ -69,12 +84,36 @@ export class AuthService {
     }
   }
 
-  /**
-   * Obtiene el ROL del usuario logueado
-   */
-  getUserRole(): 'admin' | 'operaciones' | 'gerente' | null {
-    const payload = this.getDecodedToken();
-    return payload ? payload.rol : null;
+  private loadUserFromToken(): void {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      this.decodeAndSetUser(token);
+    }
+  }
+
+  private decodeAndSetUser(token: string): void {
+    try {
+      const payload = jwtDecode<AuthTokenPayload>(token);
+      
+      // Mapea los nombres de la BD (snake_case) a tu modelo (camelCase)
+      this.currentUser = {
+        id: payload.usuario_id,
+        username: payload.username, 
+        nombre: payload.nombre,
+        rol: payload.rol,
+        sucursalId: payload.sucursal_id
+      };
+      
+      // Opcional: Verificar si el token ha expirado
+      // const expiry = payload.exp * 1000;
+      // if (Date.now() >= expiry) {
+      //   this.logout();
+      // }
+
+    } catch (error) {
+      console.error("Token inválido, cerrando sesión.", error);
+      this.logout();
+    }
   }
 
   /**

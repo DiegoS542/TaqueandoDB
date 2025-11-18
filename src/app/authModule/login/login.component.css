@@ -1,0 +1,114 @@
+/* src/app/auth/login/login.component.css */
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Ocupa toda la altura de la ventana */
+  
+  /* Paleta de colores: */
+  --primary-dark: #1a1a1a;        /* Casi negro */
+  --secondary-dark: #2c2c2c;      /* Gris oscuro */
+  --text-light: #f0f0f0;          /* Blanco roto para texto */
+  --accent-color: #6a1b9a;        /* Morado oscuro */
+  --error-color: #e53935;         /* Rojo para errores */
+  --border-color: #444;           /* Borde para campos */
+  --shadow-color: rgba(0, 0, 0, 0.3); /* Sombra */
+
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+  color: var(--text-light);
+  font-family: 'Arial', sans-serif;
+}
+
+.login-logo {
+  width: 200px;
+  margin-bottom: 40px;
+}
+
+h2 {
+  font-size: 2.2em;
+  margin-bottom: 30px;
+  color: var(--text-light);
+  text-shadow: 2px 2px 4px var(--shadow-color); /* Sombra para el título */
+}
+
+form {
+  background-color: var(--secondary-dark); /* Fondo del formulario */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px var(--shadow-color);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  margin-bottom: 8px;
+  font-size: 1.1em;
+  color: #dcdcdc; /* Un gris un poco más oscuro que el texto */
+}
+
+.form-field input {
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+  font-size: 1em;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Estilo para cuando el input está seleccionado (en foco) */
+.form-field input:focus {
+  outline: none;
+  border-color: var(--accent-color); /* Resalta al enfocar */
+  box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.3); /* Usando el RGB del morado */
+}
+
+/* Estilo para el texto de placeholder */
+.form-field input::placeholder {
+  color: #888;
+}
+
+button[type="submit"] {
+  padding: 15px 20px;
+  background-color: var(--accent-color); /* Color de acento para el botón */
+  color: var(--text-light);
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Efecto hover solo cuando el botón NO está deshabilitado */
+button[type="submit"]:hover:not(:disabled) {
+  background-color: #581681; /* Un morado un poco más oscuro */
+  transform: translateY(-2px);
+}
+
+/* Estilo para el botón deshabilitado */
+button[type="submit"]:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.error-message {
+  color: var(--error-color);
+  background-color: rgba(229, 57, 53, 0.1); /* Usando el RGB del rojo */
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
+}
