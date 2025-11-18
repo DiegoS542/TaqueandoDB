@@ -1,1 +1,35 @@
-<p>login works!</p>
+<div class="login-container">
+  
+  <img src="/assets/logo.png" alt="Logo de la Taquería" class="login-logo">
+  
+  <h2>Bienvenido</h2>
+  
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+    
+    <div class="form-field">
+      <label for="username">Usuario</label>
+      <input 
+        id="username" 
+        type="text" 
+        formControlName="username" 
+        placeholder="Tu usuario (ej. gerente.norte)">
+    </div>
+
+    <div class="form-field">
+      <label for="password">Contraseña</label>
+      <input 
+        id="password" 
+        type="password" 
+        formControlName="password" 
+        placeholder="••••••••">
+    </div>
+
+    <button type="submit" [disabled]="loginForm.invalid">
+      Entrar
+    </button>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </form>
+</div>
