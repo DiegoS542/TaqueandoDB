@@ -1,1 +1,58 @@
-<p>gestion-sucursales works!</p>
+<div class="container">
+  
+  <div class="header-section">
+    <h2>Gestión de Sucursales</h2>
+    <button class="btn-primary" (click)="openModal()">+ Nueva Sucursal</button>
+  </div>
+
+  <div class="table-container">
+    <table *ngIf="!isLoading; else loadingTemplate">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre de Sucursal</th>
+          <th class="actions-col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let suc of sucursales">
+          <td>#{{ suc.sucursal_id }}</td>
+          <td>{{ suc.nombre }}</td>
+          <td class="actions-cell">
+            <button class="btn-icon edit" (click)="openModal(suc)">Editar</button>
+            <button class="btn-icon delete" (click)="deleteSucursal(suc.sucursal_id!)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #loadingTemplate>
+      <div class="loading">Cargando sucursales...</div>
+    </ng-template>
+    
+    <div *ngIf="!isLoading && sucursales.length === 0" class="no-data">
+      No hay sucursales registradas.
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showModal">
+  <div class="modal-content">
+    <h3>{{ isEditing ? 'Editar Sucursal' : 'Nueva Sucursal' }}</h3>
+    
+    <form [formGroup]="sucursalForm" (ngSubmit)="onSubmit()">
+      <div class="form-field">
+        <label>Nombre de la Sucursal</label>
+        <input type="text" formControlName="nombre" placeholder="Ej. Norte">
+        <small *ngIf="sucursalForm.get('nombre')?.invalid && sucursalForm.get('nombre')?.touched" class="error-text">
+          El nombre es requerido
+        </small>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="sucursalForm.invalid">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
