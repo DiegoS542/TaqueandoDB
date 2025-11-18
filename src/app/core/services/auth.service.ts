@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, tap } from 'rxjs';
 import { Usuario } from '../../shared/models/usuario.model';
+import { environment } from '../../../environments/environments';
 
-const API_URL = 'http://localhost:3000/api/auth';
+const API_URL = `${environment.apiUrl}/auth`;
 
 // Interfaz para el payload de nuestro token
 interface AuthTokenPayload {
