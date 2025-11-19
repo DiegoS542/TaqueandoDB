@@ -1,42 +1,65 @@
-/* src/app/core/components/layout/navbar/navbar.component.css */
+:host {
+  /* Definimos el ancho del sidenav aquí para que coincida */
+  --sidenav-width: 240px;
+  --navbar-height: 64px;
+}
 
 .navbar-container {
   display: flex;
-  justify-content: space-between; /* Empuja los elementos a los extremos */
+  justify-content: space-between;
   align-items: center;
   
-  /* Usamos las variables globales */
   background-color: var(--secondary-dark);
   color: var(--text-light);
   
-  padding: 12px 24px; /* 12px arriba/abajo, 24px izquierda/derecha */
+  height: var(--navbar-height);
   
-  /* Sombra sutil para darle profundidad */
+  /* IMPORTANTE: Quitamos el padding izquierdo del contenedor principal 
+     para que el cálculo de los 240px empiece desde el borde absoluto de la pantalla.
+     Mantenemos el padding derecho para el botón de logout. */
+  padding: 0 24px 0 0; 
+  
   box-shadow: 0 4px 12px var(--shadow-color);
-  
-  /* Fija el navbar en la parte superior */
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000; /* Asegura que esté por encima de otro contenido */
+  z-index: 1000;
 }
 
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 16px; /* Espacio entre el logo y el título */
+  height: 100%; /* Ocupa toda la altura del navbar */
+}
+
+/* NUEVA CLASE: El contenedor del logo */
+.logo-wrapper {
+  /* Esta es la clave: Mismo ancho que el Sidenav */
+  width: var(--sidenav-width);
+  
+  /* Centramos el logo (imagen) dentro de este espacio */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* Opcional: Un borde derecho muy sutil para ver la división (como en tu imagen de Excel) */
+  /* border-right: 1px solid rgba(255, 255, 255, 0.1); */ 
 }
 
 .navbar-logo {
-  height: 40px; /* Ajusta la altura del logo */
+  height: 40px; /* Ajusta el tamaño del logo a tu gusto */
   width: auto;
 }
 
 .navbar-title {
   font-size: 1.2em;
   font-weight: bold;
+  color: #FEFFFF;
+
+  padding-left: 24px; 
 }
+
 
 .navbar-right {
   display: flex;
@@ -45,8 +68,8 @@
 }
 
 .navbar-username {
-  font-size: 0.9em;
-  color: #ccc; /* Un gris un poco más apagado */
+  font-size: 1.2em;
+  color: #FEFFFF; 
 }
 
 .logout-button {

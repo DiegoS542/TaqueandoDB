@@ -21,30 +21,46 @@
   font-family: 'Arial', sans-serif;
 }
 
+/* 1. Hacemos el logo MÁS GRANDE */
 .login-logo {
-  width: 200px;
-  margin-bottom: 40px;
+  width: 350px; /* Antes era 200px. Lo subimos bastante para que destaque. */
+  margin-bottom: 20px; /* Reducimos un poco el margen inferior para acercarlo al título */
 }
 
-h2 {
-  font-size: 2.2em;
-  margin-bottom: 30px;
-  color: var(--text-light);
-  text-shadow: 2px 2px 4px var(--shadow-color); /* Sombra para el título */
-}
-
+/* 2. Hacemos el cuadro de login MÁS PEQUEÑO y compacto */
 form {
-  background-color: var(--secondary-dark); /* Fondo del formulario */
-  padding: 40px;
+  background-color: var(--secondary-dark);
+  
+  /* Reducimos el padding interno (el espacio entre el borde y los inputs) */
+  padding: 25px 30px; /* Antes era 40px. Esto lo hace ver menos "aireado" y más compacto */
+  
   border-radius: 12px;
   box-shadow: 0 10px 30px var(--shadow-color);
+  
   width: 100%;
-  max-width: 400px;
+  
+  /* Esta es la clave: Reducimos el ancho máximo permitido */
+  max-width: 320px; /* Antes era 400px. Esto lo hace más angosto */
+  
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px; /* Reducimos un poco el espacio entre elementos (antes 20px) */
 }
 
+/* src/app/auth/login/login.component.css */
+
+h2 {
+  font-family: 'Montserrat', sans-serif; /* Usamos la nueva fuente */
+  font-weight: 700; /* Negrita para que destaque */
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: var(--text-light);
+  text-transform: uppercase; /* Opcional: Mayúsculas para más impacto */
+  letter-spacing: 2px;       /* Esto le da el toque elegante */
+  
+  /* Sombra suave */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+}
 .form-field {
   display: flex;
   flex-direction: column;
