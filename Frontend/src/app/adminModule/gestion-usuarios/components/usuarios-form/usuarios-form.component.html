@@ -1,0 +1,53 @@
+<div class="modal-backdrop" *ngIf="showModal">
+  <div class="modal-content">
+    <h3>{{ isEditing ? 'Editar Usuario' : 'Nuevo Usuario' }}</h3>
+    
+    <form [formGroup]="usuarioForm" (ngSubmit)="submit()">
+      
+      <div class="form-field">
+        <label>Nombre Completo</label>
+        <input type="text" formControlName="nombre">
+      </div>
+
+      <div class="form-row">
+        <div class="form-field half">
+          <label>Usuario</label>
+          <input type="text" formControlName="username">
+        </div>
+        <div class="form-field half">
+          <label>Email</label>
+          <input type="email" formControlName="email">
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Contraseña {{ isEditing ? '(Opcional)' : '*' }}</label>
+        <input type="password" formControlName="password">
+      </div>
+
+      <div class="form-field">
+        <label>Rol</label>
+        <select formControlName="rol">
+          <option value="gerente">Gerente</option>
+          <option value="operaciones">Operaciones</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+
+      <div class="form-field" *ngIf="usuarioForm.get('rol')?.value === 'gerente'">
+        <label>Asignar Sucursal</label>
+        <select formControlName="sucursal_id">
+          <option [ngValue]="null">-- Selecciona --</option>
+          <option *ngFor="let suc of sucursales" [value]="suc.sucursal_id">
+            {{ suc.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="usuarioForm.invalid">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>

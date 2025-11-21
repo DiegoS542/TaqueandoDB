@@ -16,7 +16,7 @@ node_modules/
 .sass-cache/
 /connect.lock
 /coverage
-/src/environments/environment.ts # Opcional: si tienes secretos en el front
+/src/environments/environment.ts 
 
 # --- IDEs y SISTEMA (Basura) ---
 .idea/

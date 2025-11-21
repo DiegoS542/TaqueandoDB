@@ -1,0 +1,35 @@
+<div class="table-container">
+
+  <table *ngIf="!isLoading; else loadingTemplate">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Usuario</th>
+        <th>Rol</th>
+        <th>Sucursal</th>
+        <th class="actions-col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let u of usuarios">
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.username }}</td>
+        <td>
+          <span class="badge" [ngClass]="u.rol">{{ u.rol | uppercase }}</span>
+        </td>
+        <td>{{ u.nombre_sucursal || '---' }}</td>
+        <td class="actions-cell">
+          <button class="btn-icon edit" (click)="edit(u)">Editar</button>
+          <button class="btn-icon delete" (click)="delete(u.usuario_id)">Eliminar</button>
+        </td>
+      </tr>
+      <tr *ngIf="usuarios.length === 0">
+        <td colspan="5" class="no-data">No hay usuarios registrados.</td>
+      </tr>
+    </tbody>
+  </table>
+
+    <ng-template #loadingTemplate>
+      <div class="loading">Cargando Usuarios...</div>
+    </ng-template>
+</div>

@@ -1,1 +1,24 @@
-<p>gestion-usuarios works!</p>
+<div class="container">
+  <div class="header-section">
+    <h2>Gestión de Usuarios</h2>
+    <button class="btn-primary" (click)="showModal = true; usuarioToEdit = null">
+      + Nuevo Usuario
+    </button>
+  </div>
+
+  <app-usuarios-list
+    [usuarios]="usuarios"
+    [isLoading]="isLoading"
+    (onEdit)="handleEdit($event)"
+    (onDelete)="handleDelete($event)">
+  </app-usuarios-list>
+
+  <app-usuarios-form
+    [showModal]="showModal"
+    [usuarioToEdit]="usuarioToEdit"
+    [sucursales]="sucursales"
+    (onSave)="handleSave($event)"
+    (onCancel)="closeModal()">
+  </app-usuarios-form>
+
+</div>
