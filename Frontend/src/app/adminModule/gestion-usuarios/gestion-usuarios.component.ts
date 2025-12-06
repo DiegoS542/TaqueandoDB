@@ -57,6 +57,11 @@ export class GestionUsuariosComponent {
     this.showModal = true;
   }
 
+  handleCreate() {
+    this.usuarioToEdit = null;
+    this.showModal = true;
+  }
+
   handleDelete(id: number) {
     if (confirm('¿Eliminar usuario?')) {
       this.usuariosService.deleteUsuario(id).subscribe(() => this.loadData());

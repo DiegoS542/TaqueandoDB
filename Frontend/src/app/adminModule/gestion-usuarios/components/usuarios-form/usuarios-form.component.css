@@ -1,3 +1,17 @@
+/* Aseguramos que inputs y selects no excedan el ancho de su contenedor */
+.form-field input,
+.form-field select {
+  width: 100%; /* Ocupa todo el espacio disponible */
+  box-sizing: border-box; /* El padding y borde se incluyen en el ancho total */
+  
+  /* Estilos previos (mantenerlos) */
+  padding: 10px;
+  background-color: var(--primary-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: white;
+}
+
 /* Contenedor Principal */
 .container {
   max-width: 1000px;
@@ -31,10 +45,20 @@
 .btn-secondary {
   background-color: transparent;
   border: 1px solid var(--border-color);
-  color: var(--text-light);
+  color: #aaa; /* Color inicial un poco más apagado */
   padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
+  transition: all 0.3s ease; /* Transición suave */
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  border-color: var(--error-color); /* Borde rojo al pasar el mouse */
+  color: var(--error-color);        /* Texto rojo */
+  background-color: rgba(229, 57, 53, 0.1); /* Fondo rojizo suave */
+  transform: translateY(-1px); /* Se levanta un poquito */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 /* Tabla */
@@ -185,4 +209,9 @@ select {
   border: 1px solid var(--border-color);
   border-radius: 4px;
   color: white;
+}
+
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: var(--error-color);
 }

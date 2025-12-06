@@ -40,15 +40,15 @@ const createUsuario = async (req, res) => {
     try {
         // Hashear contraseña
         const salt = await bcrypt.genSalt(10);
-        const passwordHash = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         const query = `
-            INSERT INTO usuarios (username, email, password_hash, nombre, rol, sucursal_id)
+            INSERT INTO usuarios (username, email, password, nombre, rol, sucursal_id)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING usuario_id, username, email, nombre, rol, sucursal_id
         `;
         
-        const response = await db.query(query, [username, email, passwordHash, nombre, rol, finalSucursalId]);
+        const response = await db.query(query, [username, email, hashedPassword, nombre, rol, finalSucursalId]);
         
         res.status(201).json({
             message: 'Usuario creado exitosamente',
@@ -84,10 +84,10 @@ const updateUsuario = async (req, res) => {
         // Si envían password, la actualizamos (hasheada)
         if (password && password.trim() !== '') {
             const salt = await bcrypt.genSalt(10);
-            const passwordHash = await bcrypt.hash(password, salt);
+            const hashedPassword = await bcrypt.hash(password, salt);
             
-            query = `UPDATE usuarios SET username=$1, email=$2, password_hash=$3, nombre=$4, rol=$5, sucursal_id=$6 WHERE usuario_id=$7 RETURNING *`;
-            params = [username, email, passwordHash, nombre, rol, finalSucursalId, id];
+            query = `UPDATE usuarios SET username=$1, email=$2, password=$3, nombre=$4, rol=$5, sucursal_id=$6 WHERE usuario_id=$7 RETURNING *`;
+            params = [username, email, hashedPassword, nombre, rol, finalSucursalId, id];
         } else {
             // Si NO envían password, mantenemos la que tiene
             query = `UPDATE usuarios SET username=$1, email=$2, nombre=$3, rol=$4, sucursal_id=$5 WHERE usuario_id=$6 RETURNING *`;
