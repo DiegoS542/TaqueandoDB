@@ -1,1 +1,79 @@
-<p>gestion-proveedores works!</p>
+<div class="container">
+  
+  <div class="header-section">
+    <h2>Gestión de Proveedores</h2>
+    <button class="btn-primary" (click)="openModal()">
+      + Nuevo Proveedor
+    </button>
+  </div>
+
+  <div class="table-container">
+    
+    <table *ngIf="!isLoading; else loadingTemplate">
+      <thead>
+        <tr>
+          <th>Empresa</th>
+          <th>Contacto</th>
+          <th class="actions-col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prov of proveedores">
+          <td>{{ prov.nombre_empresa }}</td>
+          <td>{{ prov.contacto }}</td>
+          <td class="actions-cell">
+            <button class="btn-icon edit" (click)="openModal(prov)">Editar</button>
+            <button class="btn-icon delete" (click)="delete(prov.proveedor_id!)">Eliminar</button>
+          </td>
+        </tr>
+
+        <tr *ngIf="proveedores.length === 0">
+          <td colspan="3" class="no-data">No hay proveedores registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #loadingTemplate>
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Cargando proveedores...</p>
+      </div>
+    </ng-template>
+
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showModal">
+  <div class="modal-content">
+    <h3>{{ isEditing ? 'Editar Proveedor' : 'Nuevo Proveedor' }}</h3>
+    
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      
+      <div class="form-field">
+        <label>Nombre de la Empresa</label>
+        <input type="text" formControlName="nombre_empresa" maxlength="30">
+        
+        <small class="error-text" 
+               *ngIf="form.get('nombre_empresa')?.hasError('required') && (form.get('nombre_empresa')?.dirty || form.get('nombre_empresa')?.touched)">
+          El nombre es obligatorio.
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label>Contacto (Teléfono)</label>
+        <input type="text" formControlName="contacto" placeholder="xxx-xxx-xxxx" maxlength="30">
+        
+        <small class="error-text" 
+               *ngIf="form.get('contacto')?.hasError('required') && (form.get('contacto')?.dirty || form.get('contacto')?.touched)">
+          El contacto es obligatorio.
+        </small>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="form.invalid">Guardar</button>
+      </div>
+
+    </form>
+  </div>
+</div>
