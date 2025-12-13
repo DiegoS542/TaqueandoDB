@@ -1,0 +1,53 @@
+<div class="sub-section-container">
+  <label class="section-label">Proveedores y Costos</label>
+
+  <div class="mini-table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Proveedor</th>
+          <th>Costo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of asignados; let i = index">
+          <td>{{ item.nombre_empresa }}</td>
+          <td>${{ item.precio_compra | number:'1.2-2' }}</td> <td style="text-align: right;">
+            <button type="button" class="btn-icon delete" (click)="removeProveedor(i)">
+              &times; </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="asignados.length === 0">
+          <td colspan="3" class="no-data-small">
+            Sin proveedores (Producción Interna)
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="add-controls">
+    
+    <select [(ngModel)]="selectedProveedorId" class="control-input provider-select">
+      <option [ngValue]="null" disabled>-- Selecciona Proveedor --</option>
+      <option *ngFor="let p of allProveedores" [value]="p.proveedor_id">
+        {{ p.nombre_empresa }}
+      </option>
+    </select>
+
+    <input type="number" 
+           [(ngModel)]="precioInput" 
+           placeholder="$ Costo" 
+           class="control-input price-input"
+           min="0">
+
+    <button type="button" 
+            class="btn-secondary btn-small" 
+            (click)="addProveedor()"
+            [disabled]="!selectedProveedorId || !precioInput">
+      + Agregar
+    </button>
+  </div>
+</div>

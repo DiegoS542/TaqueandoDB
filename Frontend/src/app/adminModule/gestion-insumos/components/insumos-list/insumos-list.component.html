@@ -1,0 +1,53 @@
+<div class="table-container">
+  
+  <table *ngIf="!isLoading; else loadingTemplate">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Unidad</th>
+        <th>Tipo / Proveedores</th>
+        <th class="actions-col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of insumos">
+        <td>{{ item.nombre }}</td>
+        <td>
+          <span class="badge unit">{{ item.unidad_medida }}</span>
+        </td>
+        <td>
+          <ng-container *ngIf="item.proveedores && item.proveedores.length > 0; else internaTemplate">
+            <div class="provider-info">
+              <span class="provider-count">{{ item.proveedores.length }} Proveedor(es)</span>
+              <div class="tooltip">
+                <div *ngFor="let p of item.proveedores">
+                  {{ p.nombre_empresa }} (${{ p.precio_compra | number:'1.2-2' }})
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #internaTemplate>
+            <span class="badge interna">Producción Interna</span>
+          </ng-template>
+        </td>
+        
+        <td class="actions-cell">
+          <button class="btn-icon edit" (click)="edit(item)">Editar</button>
+          <button class="btn-icon delete" (click)="delete(item.insumo_id)">Eliminar</button>
+        </td>
+      </tr>
+
+      <tr *ngIf="insumos.length === 0">
+        <td colspan="4" class="no-data">No hay insumos registrados.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando insumos...</p>
+    </div>
+  </ng-template>
+</div>

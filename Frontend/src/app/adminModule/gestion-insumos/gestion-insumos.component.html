@@ -1,1 +1,25 @@
-<p>gestion-insumos works!</p>
+<div class="container">
+  
+  <div class="header-section">
+    <h2>Catálogo de Insumos</h2>
+    <button class="btn-primary" (click)="handleCreate()">
+      + Nuevo Insumo
+    </button>
+  </div>
+
+  <app-insumos-list
+    [insumos]="insumos"
+    [isLoading]="isLoading"
+    (onEdit)="handleEdit($event)"
+    (onDelete)="handleDelete($event)">
+  </app-insumos-list>
+
+  <app-insumo-form
+    [showModal]="showModal"
+    [insumoToEdit]="insumoToEdit"
+    [allProveedores]="allProveedores"
+    (onSave)="handleSave($event)"
+    (onCancel)="closeModal()">
+  </app-insumo-form>
+
+</div>

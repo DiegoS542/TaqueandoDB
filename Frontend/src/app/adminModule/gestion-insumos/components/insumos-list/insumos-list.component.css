@@ -1,0 +1,59 @@
+/* Estilos específicos para esta tabla */
+
+.badge.unit {
+  background-color: #444;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: monospace;
+}
+
+.badge.interna {
+  background-color: #009688; /* Verde azulado elegante */
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.provider-info {
+  position: relative; /* Para el tooltip */
+  cursor: help;
+  display: inline-block;
+}
+
+.provider-count {
+  font-weight: 600;
+  color: #aaa;
+  border-bottom: 1px dotted #666; /* Indica que hay más info */
+}
+
+/* Tooltip casero con CSS puro */
+.tooltip {
+  visibility: hidden;
+  background-color: #222;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Aparece arriba */
+  left: 50%;
+  transform: translateX(-50%); /* Centrado */
+  width: max-content;
+  max-width: 250px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  border: 1px solid #444;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.85em;
+}
+
+.provider-info:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}

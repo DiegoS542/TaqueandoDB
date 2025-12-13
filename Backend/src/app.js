@@ -19,6 +19,7 @@ app.use('/api/auth', authRoutes); // Todo lo de authRoutes empieza con /api/auth
 app.use('/api/sucursales', sucursalesRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/proveedores', proveedoresRoutes);
+app.use('/api/insumos', require('./routes/insumos.routes'));
 // app.use('/api/ventas', ventasRoutes);
 
 module.exports = app;
