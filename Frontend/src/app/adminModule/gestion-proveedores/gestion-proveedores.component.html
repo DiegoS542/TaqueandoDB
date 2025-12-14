@@ -25,17 +25,23 @@
           <td>{{ prov.contacto }}</td>
           
           <td style="text-align: center;">
-  <span class="badge-count" [class.zero]="prov.total_insumos_surtidos === 0">
-    {{ prov.total_insumos_surtidos }}
+  <span class="badge-count" 
+        [class.clickable]="(prov.total_insumos_surtidos ?? 0) > 0"
+        [class.zero]="(prov.total_insumos_surtidos ?? 0) === 0"
+        (click)="viewInsumos(prov)"
+        title="Ver lista de insumos de {{ prov.nombre_empresa }}">
+    
+    {{ prov.total_insumos_surtidos ?? 0 }}
+  
   </span>
 </td>
-
           <td style="text-align: center; font-size: 0.85em; color: #aaa;">
   <span *ngIf="(prov.total_insumos_surtidos || 0) > 0">
     ${{ prov.precio_minimo | number:'1.0-0' }} - ${{ prov.precio_maximo | number:'1.0-0' }}
   </span>
   <span *ngIf="!prov.total_insumos_surtidos || prov.total_insumos_surtidos === 0">--</span>
 </td>
+        
 
           <td class="actions-cell">
             <button class="btn-icon edit" (click)="openModal(prov)">Editar</button>
@@ -89,5 +95,42 @@
       </div>
 
     </form>
+  </div>
+</div>
+<div class="modal-backdrop" *ngIf="showInsumosModal">
+  <div class="modal-content">
+    <h3>Insumos de: <span style="color: var(--accent-color);">{{ selectedProveedorName }}</span></h3>
+    
+    <div class="table-container" style="max-height: 300px; overflow-y: auto; margin-top: 15px;">
+      
+      <table *ngIf="!isLoadingInsumos; else loadingSmall">
+        <thead>
+          <tr>
+            <th>Insumo</th>
+            <th>Unidad</th>
+            <th style="text-align: right;">Costo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of insumosList">
+            <td>{{ item.nombre }}</td>
+            <td><span class="badge" style="background-color: #444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em;">{{ item.unidad_medida }}</span></td>
+            <td style="text-align: right; font-weight: bold;">${{ item.precio_compra | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #loadingSmall>
+        <div class="loading-state">
+          <div class="spinner" style="width: 25px; height: 25px; border-width: 3px;"></div>
+          <small>Cargando lista...</small>
+        </div>
+      </ng-template>
+
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-primary" (click)="closeInsumosModal()">Cerrar</button>
+    </div>
   </div>
 </div>

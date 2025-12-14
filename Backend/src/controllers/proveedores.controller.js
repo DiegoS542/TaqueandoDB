@@ -66,4 +66,35 @@ const deleteProveedor = async (req, res) => {
     }
 };
 
-module.exports = { getProveedores, createProveedor, updateProveedor, deleteProveedor };
+
+// Obtener insumos de un proveedor específico
+const getInsumosByProveedor = async (req, res) => {
+    const id = parseInt(req.params.id);
+    try {
+        const query = `
+            SELECT 
+                p.nombre_empresa, 
+                i.nombre,
+                i.unidad_medida,
+                ip.precio_compra
+            FROM insumo_proveedor ip
+            JOIN insumos i ON ip.insumo_id = i.insumo_id
+            JOIN proveedores p ON ip.proveedor_id = p.proveedor_id
+            WHERE ip.proveedor_id = $1
+            ORDER BY i.nombre ASC
+        `;
+        const response = await db.query(query, [id]);
+        res.status(200).json(response.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener insumos del proveedor' });
+    }
+};
+
+module.exports = { 
+    getProveedores, 
+    createProveedor, 
+    updateProveedor, 
+    deleteProveedor, 
+    getInsumosByProveedor
+};

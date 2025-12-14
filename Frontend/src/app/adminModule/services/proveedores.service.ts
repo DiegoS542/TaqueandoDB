@@ -37,4 +37,8 @@ export class ProveedoresService {
   deleteProveedor(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
+
+  getInsumosByProveedor(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${id}/insumos`, { headers: this.getHeaders() });
+  }
 }
