@@ -36,10 +36,15 @@
   </span>
 </td>
           <td style="text-align: center; font-size: 0.85em; color: #aaa;">
-  <span *ngIf="(prov.total_insumos_surtidos || 0) > 0">
-    ${{ prov.precio_minimo | number:'1.0-0' }} - ${{ prov.precio_maximo | number:'1.0-0' }}
+  
+  <span *ngIf="(prov.total_insumos_surtidos ?? 0) > 0">
+    ${{ (prov.precio_minimo ?? 0) | number:'1.0-0' }} - ${{ (prov.precio_maximo ?? 0) | number:'1.0-0' }}
   </span>
-  <span *ngIf="!prov.total_insumos_surtidos || prov.total_insumos_surtidos === 0">--</span>
+
+  <span *ngIf="!prov.total_insumos_surtidos || prov.total_insumos_surtidos === 0">
+    --
+  </span>
+
 </td>
         
 
