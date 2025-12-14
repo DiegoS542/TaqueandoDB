@@ -3,29 +3,11 @@ const db = require('../config/db');
 // Obtener Insumos
 const getInsumos = async (req, res) => {
     try {
-        const query = `
-            SELECT 
-                i.insumo_id, 
-                i.nombre, 
-                i.unidad_medida,
-                COALESCE(
-                    json_agg(
-                        json_build_object(
-                            'proveedor_id', p.proveedor_id,
-                            'nombre_empresa', p.nombre_empresa,
-                            'precio_compra', ip.precio_compra
-                        ) 
-                    ) FILTER (WHERE p.proveedor_id IS NOT NULL), 
-                    '[]'
-                ) as proveedores
-            FROM insumos i
-            LEFT JOIN insumo_proveedor ip ON i.insumo_id = ip.insumo_id
-            LEFT JOIN proveedores p ON ip.proveedor_id = p.proveedor_id
-            GROUP BY i.insumo_id
-            ORDER BY i.nombre ASC
-        `;
+        const query = 'SELECT * FROM vw_insumos_detalle ORDER BY nombre ASC';
+        
         const response = await db.query(query);
         res.status(200).json(response.rows);
+        
     } catch (error) {
         console.error('Error al obtener insumos:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
