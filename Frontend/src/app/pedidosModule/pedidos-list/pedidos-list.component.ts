@@ -14,6 +14,7 @@ export class PedidosListComponent {
   // Emitimos eventos al Padre cuando hagan click
   @Output() editRequest = new EventEmitter<any>();
   @Output() deleteRequest = new EventEmitter<number>();
+  @Output() viewRequest = new EventEmitter<any>();
 
   pedidos: any[] = [];
   isLoading = false;
@@ -51,4 +52,8 @@ export class PedidosListComponent {
        this.deleteRequest.emit(pedido.pedido_id);
     }
   }
+
+  onView(pedido: any) {
+    this.viewRequest.emit(pedido);
+}
 }

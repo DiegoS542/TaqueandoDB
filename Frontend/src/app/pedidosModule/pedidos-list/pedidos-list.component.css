@@ -15,12 +15,20 @@
   display: inline-block;
 }
 
-/* Opcional: Si quieres forzar que los botones de acción se centren 
-   (porque tu global .actions-cell los alinea a la derecha "flex-end")
-   puedes descomentar esto:
-*/
-/*
-.actions-cell {
-  justify-content: center !important; 
+/* Botón Ver (Verde) */
+.view {
+  background-color: #43A047; /* Un verde sólido (Material Green 600) */
+  color: white;
 }
-*/
+
+.view:hover {
+  background-color: #2E7D32; /* Un poco más oscuro al pasar el mouse */
+}
+
+/* Aseguramos que todos los botones se alineen bien */
+.actions-cell {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}

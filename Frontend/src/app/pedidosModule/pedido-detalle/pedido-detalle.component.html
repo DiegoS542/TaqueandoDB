@@ -1,0 +1,81 @@
+<div class="modal-backdrop">
+  <div class="modal-content" style="max-width: 700px;"> <h3>Detalle del Pedido #{{ pedido.pedido_id }}</h3>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+    
+    <div>
+        <small style="color: #aaa;">Fecha:</small>
+        <div style="font-weight: bold;">{{ pedido.fecha | date:'dd MMM yyyy, h:mm a' }}</div>
+    </div>
+
+    <div>
+        <small style="color: #aaa;">Sucursal:</small>
+        <div style="font-weight: bold; text-align: center;">
+            {{ pedido.sucursal_nombre }}
+        </div>
+    </div>
+
+    <div style="text-align: right;">
+        <small style="color: #aaa;">Total:</small>
+        <div style="font-weight: bold; color: #4CAF50; font-size: 1.2em;">
+            ${{ pedido.total | number:'1.2-2' }}
+        </div>
+    </div>
+
+</div>
+    
+    <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+      
+      <table *ngIf="!isLoading; else loading">
+        <thead>
+          <tr>
+            <th>Insumo</th>
+            <th>Proveedor</th>
+            <th style="text-align: center;">Cant.</th>
+            <th style="text-align: right;">Precio</th>
+            <th style="text-align: right;">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of detalles">
+            <td>
+                {{ d.insumo_nombre }}
+                <small style="color: #888;">({{ d.unidad_medida }})</small>
+            </td>
+            
+            <td style="color: #aaa; font-size: 0.9em;">
+                {{ d.nombre_empresa }}
+            </td>
+
+            <td style="text-align: center;">
+                <span class="badge" style="background-color: #333; border: 1px solid #444;">
+                    {{ d.cantidad }}
+                </span>
+            </td>
+
+            <td style="text-align: right; font-size: 0.9em;">
+                ${{ d.precio_unitario_compra | number:'1.2-2' }}
+            </td>
+
+            <td style="text-align: right; font-weight: bold;">
+                ${{ d.subtotal | number:'1.2-2' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #loading>
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando productos...</p>
+        </div>
+      </ng-template>
+
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-primary" (click)="close()">Cerrar</button>
+    </div>
+
+  </div>
+</div>

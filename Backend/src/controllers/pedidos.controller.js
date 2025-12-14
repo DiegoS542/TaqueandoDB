@@ -2,59 +2,24 @@ const db = require('../config/db');
 
 // Crear Pedido (Transacción Completa + Llamada a Cursor)
 const createPedido = async (req, res) => {
-    // Recibimos la sucursal y el array de items del formulario
     const { sucursal_id, items } = req.body; 
 
+    // Validación básica
     if (!items || items.length === 0) {
         return res.status(400).json({ error: 'El pedido no puede estar vacío' });
     }
 
-    const client = await db.pool.connect();
-
     try {
-        await client.query('BEGIN'); // Inicia la transacción
+        // CONVERTIMOS EL ARRAY DE JS A UN STRING JSON
+        const jsonItems = JSON.stringify(items);
 
-        // El total se queda en 0 por ahora, el Cursor lo calculará después
-        const headerQuery = `
-            INSERT INTO pedidos (sucursal_id, fecha, total, estado) 
-            VALUES ($1, CURRENT_DATE, 0, 'Pendiente') 
-            RETURNING pedido_id
-        `;
-        const headerRes = await client.query(headerQuery, [sucursal_id]);
-        const nuevoPedidoId = headerRes.rows[0].pedido_id;
-
-        // Insertar el Detalle
-        for (const item of items) {
-            await client.query(`
-                INSERT INTO detalle_pedidos (
-                    pedido_id, 
-                    proveedor_id, 
-                    insumo_id, 
-                    cantidad, 
-                    precio_unitario_compra
-                )
-                VALUES ($1, $2, $3, $4, $5)
-            `, [
-                nuevoPedidoId, 
-                item.proveedor_id, 
-                item.insumo_id, 
-                item.cantidad, 
-                item.precio
-            ]);
-        }
-
-        // LLAMADA AL CURSOR
-        await client.query('CALL sp_calcular_total_pedido($1)', [nuevoPedidoId]);
-
-        await client.query('COMMIT'); // Confirmamos todo
-        res.status(201).json({ message: 'Pedido creado y calculado exitosamente', id: nuevoPedidoId });
+        await db.query('CALL sp_crear_pedido_completo($1, $2)', [sucursal_id, jsonItems]);
+        
+        res.status(201).json({ message: 'Pedido procesado exitosamente por la Base de Datos' });
 
     } catch (error) {
-        await client.query('ROLLBACK'); // Si algo falla, deshacemos todo
-        console.error('Error creando pedido:', error);
-        res.status(500).json({ error: 'Error al procesar el pedido' });
-    } finally {
-        client.release();
+        console.error('Error al crear pedido:', error);
+        res.status(500).json({ error: 'Error interno al procesar el pedido' });
     }
 };
 
@@ -75,4 +40,55 @@ const getPedidosBySucursal = async (req, res) => {
     }
 };
 
-module.exports = { createPedido, getPedidosBySucursal };
+// Obtener Detalle de un Pedido
+const getDetallePedido = async (req, res) => {
+    const id = parseInt(req.params.id);
+    try {
+        // Consultamos la vista filtrando por el ID del pedido
+        const query = `
+            SELECT * FROM vw_pedido_detalle_completo 
+            WHERE pedido_id = $1 
+            ORDER BY insumo_nombre ASC
+        `;
+        
+        const response = await db.query(query, [id]);
+        res.status(200).json(response.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener detalles del pedido' });
+    }
+};
+
+//Eliminar Pedido
+const deletePedido = async (req, res) => {
+    const id = parseInt(req.params.id);
+    const client = await db.pool.connect();
+
+    try {
+        await client.query('BEGIN'); // Iniciamos operación segura
+
+        //Borrar los detalles de este pedido
+        await client.query('DELETE FROM detalle_pedidos WHERE pedido_id = $1', [id]);
+
+        //Ahora sí, borrar el pedido
+        const result = await client.query('DELETE FROM pedidos WHERE pedido_id = $1', [id]);
+
+        if (result.rowCount === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ error: 'Pedido no encontrado' });
+        }
+
+        await client.query('COMMIT'); // Guardamos cambios
+        res.status(200).json({ message: 'Pedido eliminado correctamente' });
+
+    } catch (error) {
+        await client.query('ROLLBACK'); // Si falla, deshacemos todo
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar el pedido' });
+    } finally {
+        client.release();
+    }
+};
+
+
+module.exports = { createPedido, getPedidosBySucursal, getDetallePedido, deletePedido };

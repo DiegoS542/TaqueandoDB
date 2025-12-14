@@ -22,8 +22,14 @@
   </div>
 
   <app-pedidos-list 
-    [sucursalId]="selectedSucursalId">
-  </app-pedidos-list>
+  [sucursalId]="selectedSucursalId"
+  (viewRequest)="openDetail($event)"> </app-pedidos-list>
+
+  <app-pedido-detalle
+    *ngIf="selectedPedidoDetail"
+    [pedido]="selectedPedidoDetail"
+    (onClose)="closeDetail()">
+  </app-pedido-detalle>
 
   <app-pedidos-form 
     *ngIf="showModal"

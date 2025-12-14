@@ -97,7 +97,6 @@ export class PedidoFormComponent {
 
     this.pedidosService.createPedido(payload).subscribe({
       next: () => {
-        alert('Pedido creado exitosamente');
         this.onSave.emit(); // Avisamos al padre para que recargue la tabla
       },
       error: (err) => {

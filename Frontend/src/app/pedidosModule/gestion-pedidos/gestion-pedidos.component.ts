@@ -4,10 +4,11 @@ import { PedidosListComponent } from '../pedidos-list/pedidos-list.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PedidoFormComponent } from '../pedidos-form/pedidos-form.component';
+import { PedidoDetalleComponent } from '../pedido-detalle/pedido-detalle.component';
 
 @Component({
   selector: 'app-gestion-pedidos',
-  imports: [CommonModule, FormsModule, PedidosListComponent, PedidoFormComponent],
+  imports: [CommonModule, FormsModule, PedidosListComponent, PedidoFormComponent, PedidoDetalleComponent],
   templateUrl: './gestion-pedidos.component.html',
   styleUrl: './gestion-pedidos.component.css'
 })
@@ -19,6 +20,7 @@ export class GestionPedidosComponent {
   sucursales: any[] = [];
   selectedSucursalId: number | null = null;
   showModal = false;
+  selectedPedidoDetail: any = null;
 
   constructor(private sucursalesService: SucursalesService) {}
 
@@ -37,5 +39,13 @@ export class GestionPedidosComponent {
     if (this.selectedSucursalId) {
       this.listaPedidos.loadPedidos();
     }
+  }
+
+  openDetail(pedido: any) {
+    this.selectedPedidoDetail = pedido;
+  }
+
+  closeDetail() {
+    this.selectedPedidoDetail = null;
   }
 }

@@ -27,4 +27,8 @@ export class PedidosService {
   createPedido(payload: any): Observable<any> {
     return this.http.post(this.apiUrl, payload, { headers: this.getHeaders() });
   }
+
+  getDetallePedido(pedidoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${pedidoId}/detalle`, { headers: this.getHeaders() });
+  }
 }
