@@ -1,0 +1,26 @@
+/* NO necesitamos redefinir tablas, botones ni spinners.
+   Angular tomará todo eso de src/styles.css automáticamente.
+*/
+
+/* --- Estilo Específico: La bolita de conteo --- */
+/* Esto no estaba en tu styles.css, así que lo definimos aquí */
+.badge-count {
+  background-color: #333;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: bold;
+  border: 1px solid #444;
+  display: inline-block;
+}
+
+/* Opcional: Si quieres forzar que los botones de acción se centren 
+   (porque tu global .actions-cell los alinea a la derecha "flex-end")
+   puedes descomentar esto:
+*/
+/*
+.actions-cell {
+  justify-content: center !important; 
+}
+*/

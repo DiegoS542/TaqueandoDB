@@ -1,1 +1,35 @@
-<p>gestion-pedidos works!</p>
+<div class="container">
+  
+  <div class="header-section">
+    <h2>Gestión de Pedidos</h2>
+    
+    <div class="controls-wrapper">
+      
+      <select [(ngModel)]="selectedSucursalId" class="filter-select">
+        <option [ngValue]="null" disabled>-- Selecciona Sucursal --</option>
+        <option *ngFor="let s of sucursales" [value]="s.sucursal_id">
+          {{ s.nombre }}
+        </option>
+      </select>
+
+      <button class="btn-primary" 
+              (click)="showModal = true" 
+              [disabled]="!selectedSucursalId">
+        + Nuevo Pedido
+      </button>
+
+    </div>
+  </div>
+
+  <app-pedidos-list 
+    [sucursalId]="selectedSucursalId">
+  </app-pedidos-list>
+
+  <app-pedidos-form 
+    *ngIf="showModal"
+    [sucursalId]="selectedSucursalId!"
+    (onClose)="showModal = false"
+    (onSave)="handleSave()">
+  </app-pedidos-form>
+
+</div>

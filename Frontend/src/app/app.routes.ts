@@ -30,7 +30,7 @@ export const routes: Routes = [
       },
       { 
         path: 'pedidos', 
-        loadComponent: () => import('./pedidosModule/pedidos/pedidos.component').then(m => m.PedidosComponent) 
+        loadComponent: () => import('./pedidosModule/gestion-pedidos/gestion-pedidos.component').then(m => m.GestionPedidosComponent) 
       },
       // Rutas de Admin (protegidas por el adminGuard)
       { 
