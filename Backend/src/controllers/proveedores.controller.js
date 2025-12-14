@@ -3,7 +3,9 @@ const db = require('../config/db');
 // Obtener todos
 const getProveedores = async (req, res) => {
     try {
-        const response = await db.query('SELECT * FROM proveedores ORDER BY nombre_empresa ASC');
+        const query = 'SELECT * FROM vw_proveedores_metricas';
+        
+        const response = await db.query(query);
         res.status(200).json(response.rows);
     } catch (error) {
         console.error(error);

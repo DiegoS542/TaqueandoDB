@@ -1,0 +1,13 @@
+.badge-count {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.85em;
+}
+
+.badge-count.zero {
+  background-color: #555; /* Gris si es cero */
+  opacity: 0.5;
+}
