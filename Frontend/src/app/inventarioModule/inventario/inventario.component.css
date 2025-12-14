@@ -1,0 +1,78 @@
+/* Variables (Mantenemos las que ya tenías) */
+:root {
+  /* ... Tus variables aquí ... */
+  --secondary-dark: #2a2a2a; /* Fondo de contenedores (como la tabla) */
+  --text-light: #f0f0f0;
+  /* ... */
+}
+
+/* --- SECCIÓN MODAL MEJORADA --- */
+
+.modal-content {
+  background-color: var(--secondary-dark);
+  padding: 30px;
+  border-radius: 12px;
+
+  /* 🔥 MEJORA CLAVE 1: Aumentar el ancho del modal para que los campos duales respiren */
+  width: 550px; /* Aumentamos de 400px a 550px */
+  max-width: 90%; /* Asegura que no se salga en pantallas pequeñas */
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  color: var(--text-light);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separador visual */
+  padding-bottom: 10px;
+}
+
+/* Layout para el formulario (ya lo tenías, mantenemos) */
+.form-row {
+  display: flex;
+  gap: 15px; /* Espacio entre los campos 'half' */
+}
+.form-field.half {
+  flex: 1; /* Esto hace que ocupen el 50% cada uno */
+}
+
+/* MEJORA VISUAL: Ajustamos la alineación de los campos 'half' */
+.form-field {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  margin-bottom: 5px; /* Reducimos el espacio un poco */
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+/* Mantenemos el estilo de input para consistencia */
+.form-field input,
+.form-field select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  background-color: var(--primary-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: white;
+}
+
+/* Ajuste sutil para los mensajes de error */
+.error-text {
+  color: var(--error-color);
+  font-size: 0.75em; /* Ligeramente más pequeño */
+  margin-top: 3px; /* Más cerca del campo */
+}
+
+/* Mantenemos las acciones al final */
+.modal-actions {
+  margin-top: 30px; /* Más espacio antes de los botones */
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
