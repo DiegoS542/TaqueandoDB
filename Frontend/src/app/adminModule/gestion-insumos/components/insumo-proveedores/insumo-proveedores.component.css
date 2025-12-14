@@ -1,3 +1,6 @@
+/* src/app/admin/gestion-insumos/components/insumo-proveedores/insumo-proveedores.component.css */
+
+/* --- CONTENEDOR PRINCIPAL --- */
 .sub-section-container {
   margin-top: 15px;
   border: 1px solid var(--border-color);
@@ -14,8 +17,9 @@
   font-weight: 500;
 }
 
+/* --- TABLA PEQUEÑA --- */
 .mini-table-wrapper {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid var(--border-color);
@@ -23,12 +27,16 @@
 
 .mini-table-wrapper table {
   background-color: var(--primary-dark);
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .mini-table-wrapper th, 
 .mini-table-wrapper td {
   padding: 8px 12px;
   font-size: 0.9em;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .no-data-small {
@@ -38,25 +46,66 @@
   padding: 15px;
 }
 
-/* Controles de abajo */
+/* --- CONTROLES DE ABAJO (Fila Flex) --- */
 .add-controls {
   display: flex;
+  align-items: center; /* Alineación vertical perfecta */
   gap: 10px;
+  width: 100%;
 }
 
+/* INPUTS */
 .control-input {
-  padding: 8px;
+  height: 38px !important;    /* Altura fija */
+  padding: 0 10px;
   background-color: var(--primary-dark);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   color: white;
+  box-sizing: border-box;     /* El borde cuenta dentro de la altura */
+  font-size: 0.9em;
+  outline: none;
 }
 
 .provider-select { flex: 2; }
 .price-input { flex: 1; }
 
+/* --- EL BOTÓN INDEPENDIENTE --- */
 .btn-small {
-  padding: 5px 15px;
+  /* 1. Dimensiones y Posición */
+  height: 38px !important;    /* IDÉNTICA a los inputs */
+  padding: 0 16px;            /* Padding lateral justo */
+  min-width: max-content;     /* El ancho se ajusta al texto */
+  margin: 0;                  /* Sin márgenes extraños */
+  
+  /* 2. Comportamiento Flex (Antiaplastamiento) */
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+
+  /* 3. Estilo Visual (Copiado de btn-secondary pero local) */
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
   font-size: 0.9em;
+  transition: all 0.2s;
+  box-sizing: border-box;
 }
 
+/* Estados del botón */
+.btn-small:hover:not(:disabled) {
+  border-color: var(--text-light);
+  background-color: rgba(255,255,255,0.05);
+  color: white;
+}
+
+.btn-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #444;
+}

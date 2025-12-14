@@ -41,13 +41,13 @@
            [(ngModel)]="precioInput" 
            placeholder="$ Costo" 
            class="control-input price-input"
-           min="0">
-
-    <button type="button" 
+           min="0"
+           oninput="if(this.value.length > 6) this.value = this.value.slice(0,6);"> 
+  </div>
+  <button type="button" 
             class="btn-secondary btn-small" 
             (click)="addProveedor()"
-            [disabled]="!selectedProveedorId || !precioInput">
+            [disabled]="!selectedProveedorId || !precioInput || precioInput <= 0">
       + Agregar
     </button>
-  </div>
 </div>
