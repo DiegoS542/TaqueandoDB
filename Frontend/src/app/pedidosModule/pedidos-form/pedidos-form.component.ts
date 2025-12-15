@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { InsumosService } from '../../adminModule/services/insumos.service';
 import { PedidosService } from '../../adminModule/services/pedidos.service';
@@ -11,8 +11,10 @@ import { PedidosService } from '../../adminModule/services/pedidos.service';
   styleUrl: './pedidos-form.component.css'
 })
 export class PedidoFormComponent {
-  // Recibimos la Sucursal obligatoriamente desde el Padre
-  @Input() sucursalId!: number; 
+  
+  @Input() sucursalId!: number;
+  // 1. NUEVO: Recibimos el pedido a editar (puede ser null si es nuevo)
+  @Input() pedidoEditar: any | null = null; 
   
   @Output() onClose = new EventEmitter<void>();
   @Output() onSave = new EventEmitter<void>();
@@ -27,35 +29,75 @@ export class PedidoFormComponent {
     private insumosService: InsumosService
   ) {
     this.form = this.fb.group({
-      items: this.fb.array([]) // Iniciamos vacío
+      items: this.fb.array([]) 
     });
   }
 
   ngOnInit() {
-    // Cargamos el catálogo de insumos (que ya trae proveedores anidados gracias a la VISTA SQL)
+    // 2. MODIFICADO: Primero cargamos el catálogo, LUEGO decidimos si llenamos o iniciamos vacío
     this.insumosService.getInsumos().subscribe(data => {
       this.insumosCatalogo = data;
-      this.addItem(); // Agregamos la primera fila vacía por cortesía
+
+      if (this.pedidoEditar) {
+        // Si hay un pedido para editar, llenamos el form con sus datos
+        this.cargarDatosEdicion();
+      } else {
+        // Si es nuevo, agregamos la fila vacía por defecto
+        this.addItem(); 
+      }
     });
   }
 
-  // Helper para acceder al Array en el HTML
+  // Helper para acceder al Array
   get itemsArray() {
     return this.form.get('items') as FormArray;
   }
 
-  // --- LÓGICA DEL CARRITO ---
+  // --- LÓGICA DE EDICIÓN (NUEVO) ---
+
+  cargarDatosEdicion() {
+    // Asumimos que pedidoEditar tiene una propiedad 'detalles' o 'items'
+    // que es un array con { insumo_id, proveedor_id, cantidad, ... }
+    const itemsDelPedido = this.pedidoEditar.items || []; 
+
+    itemsDelPedido.forEach((item: any) => {
+      
+      // TRUCO: Buscar el objeto COMPLETO en el catálogo usando el ID
+      // Esto es necesario para que el <select> reconozca el valor seleccionado
+      const insumoEncontrado = this.insumosCatalogo.find(ins => ins.insumo_id === item.insumo_id);
+      
+      // Buscar el proveedor dentro de ese insumo (o en tu catálogo general de proveedores)
+      // Ajusta 'proveedores' según cómo venga tu estructura desde la VISTA SQL
+      const proveedorEncontrado = insumoEncontrado?.proveedores?.find((p: any) => p.proveedor_id === item.proveedor_id);
+
+      if (insumoEncontrado && proveedorEncontrado) {
+        const itemGroup = this.fb.group({
+          insumo_obj: [insumoEncontrado, Validators.required],
+          proveedor_info: [proveedorEncontrado, Validators.required], 
+          cantidad: [item.cantidad, [Validators.required, Validators.min(0.1)]]
+        });
+
+        // Suscribirse a cambios igual que en addItem
+        itemGroup.valueChanges.subscribe(() => this.calcularTotal());
+        
+        this.itemsArray.push(itemGroup);
+      }
+    });
+
+    // Calcular el total inicial con los datos cargados
+    this.calcularTotal();
+  }
+
+  // --- LÓGICA DEL CARRITO (IGUAL) ---
 
   addItem() {
     const itemGroup = this.fb.group({
-      insumo_obj: [null, Validators.required],     // Objeto completo del insumo
-      proveedor_info: [null, Validators.required], // Objeto del proveedor seleccionado
+      insumo_obj: [null, Validators.required], 
+      proveedor_info: [null, Validators.required],
       cantidad: [1, [Validators.required, Validators.min(0.1)]]
     });
 
-    // Suscribirse a cambios para recalcular el total en tiempo real
     itemGroup.valueChanges.subscribe(() => this.calcularTotal());
-
     this.itemsArray.push(itemGroup);
   }
 
@@ -65,17 +107,17 @@ export class PedidoFormComponent {
   }
 
   calcularTotal() {
-    // Recorremos el formulario sumando (Precio * Cantidad)
     this.totalEstimado = this.itemsArray.controls.reduce((acc, control) => {
       const val = control.value;
       if (val.proveedor_info && val.cantidad) {
+        // Asegúrate que la propiedad sea precio_compra o precio (según tu DB)
         return acc + (val.proveedor_info.precio_compra * val.cantidad);
       }
       return acc;
     }, 0);
   }
 
-  // --- GUARDADO ---
+  // --- GUARDADO (MODIFICADO) ---
 
   submit() {
     if (this.form.invalid) return;
@@ -84,26 +126,42 @@ export class PedidoFormComponent {
       return;
     }
 
-    // Transformamos los objetos del formulario al formato que pide la API
-    const payload = {
-      sucursal_id: this.sucursalId,
-      items: this.form.value.items.map((i: any) => ({
-        insumo_id: i.insumo_obj.insumo_id,
+    const itemsPayload = this.form.value.items.map((i: any) => ({
+        insumo_id: i.insumo_obj.insumo_id, // Ajusta nombres de ID según tu DB
         proveedor_id: i.proveedor_info.proveedor_id,
         cantidad: i.cantidad,
-        precio: i.proveedor_info.precio_compra // Enviamos precio para histórico
-      }))
+        precio: i.proveedor_info.precio_compra 
+    }));
+
+    const payload = {
+      sucursal_id: this.sucursalId,
+      items: itemsPayload
     };
 
-    this.pedidosService.createPedido(payload).subscribe({
-      next: () => {
-        this.onSave.emit(); // Avisamos al padre para que recargue la tabla
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error al crear el pedido');
-      }
-    });
+    if (this.pedidoEditar) {
+      // 3. EDITAR: Llamamos al update
+      // Asumimos que pedidoEditar tiene el ID del pedido principal
+      this.pedidosService.updatePedido(this.pedidoEditar.id, payload).subscribe({
+        next: () => {
+            this.onSave.emit();
+            this.onClose.emit();
+        },
+        error: (err) => alert('Error al actualizar')
+      });
+
+    } else {
+      // 4. CREAR: Lo que ya tenías
+      this.pedidosService.createPedido(payload).subscribe({
+        next: () => {
+          this.onSave.emit();
+          this.onClose.emit(); // Cerramos también al guardar
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error al crear el pedido');
+        }
+      });
+    }
   }
 
   cancel() {

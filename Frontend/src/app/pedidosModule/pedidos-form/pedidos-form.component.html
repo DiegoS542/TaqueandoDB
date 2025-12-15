@@ -1,6 +1,9 @@
 <div class="modal-backdrop">
   <div class="modal-content large-modal">
-    <h3>Nuevo Pedido de Insumos</h3>
+    
+    <h3>
+      {{ pedidoEditar ? 'Editar Pedido #' + pedidoEditar.id : 'Nuevo Pedido de Insumos' }}
+    </h3>
     
     <form [formGroup]="form" (ngSubmit)="submit()">
 
@@ -66,8 +69,9 @@
 
       <div class="modal-actions">
         <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
+        
         <button type="submit" class="btn-primary" [disabled]="form.invalid || itemsArray.length === 0">
-          Confirmar Pedido
+          {{ pedidoEditar ? 'Actualizar Pedido' : 'Confirmar Pedido' }}
         </button>
       </div>
 

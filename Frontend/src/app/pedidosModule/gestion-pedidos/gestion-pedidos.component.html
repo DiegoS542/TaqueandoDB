@@ -23,7 +23,10 @@
 
   <app-pedidos-list 
   [sucursalId]="selectedSucursalId"
-  (viewRequest)="openDetail($event)"> </app-pedidos-list>
+  (editRequest)="recibirSolicitudEdicion($event)"
+  (viewRequest)="openDetail($event)">
+
+ </app-pedidos-list>
 
   <app-pedido-detalle
     *ngIf="selectedPedidoDetail"

@@ -14,33 +14,57 @@ import { PedidoDetalleComponent } from '../pedido-detalle/pedido-detalle.compone
 })
 export class GestionPedidosComponent {
   
-  // Referencia al componente hijo (La Tabla) para poder ordenarle cosas
   @ViewChild(PedidosListComponent) listaPedidos!: PedidosListComponent;
 
   sucursales: any[] = [];
   selectedSucursalId: number | null = null;
   showModal = false;
+  
+  // 1. NUEVO: Variable para guardar el pedido que vamos a editar
+  pedidoParaEditar: any = null;
+
   selectedPedidoDetail: any = null;
 
   constructor(private sucursalesService: SucursalesService) {}
 
   ngOnInit() {
-    // Cargar el combo de sucursales al inicio
     this.sucursalesService.getSucursales().subscribe(data => {
       this.sucursales = data;
     });
   }
 
-  // Se ejecuta cuando el Hijo Formulario nos avisa (onSave)
+  // --- LÓGICA DEL MODAL ---
+
+  // Botón "+ Nuevo Pedido"
+  abrirModalNuevo() {
+    this.pedidoParaEditar = null; // IMPORTANTE: Limpiamos para que el form sepa que es nuevo
+    this.showModal = true;
+  }
+
+  // Esto se ejecuta cuando el Hijo Lista grita (editRequest)
+  recibirSolicitudEdicion(pedido: any) {
+    console.log('Editando pedido:', pedido);
+    this.pedidoParaEditar = pedido; // Guardamos el pedido recibido
+    this.showModal = true;          // Abrimos el modal
+  }
+
+  // Cerrar modal (botón cancelar o X)
+  cerrarModal() {
+    this.showModal = false;
+    this.pedidoParaEditar = null; // Limpiamos siempre al cerrar
+  }
+
+  // Se ejecuta cuando el Hijo Formulario avisa (onSave)
   handleSave() {
-    this.showModal = false; // Cerramos el modal
+    this.cerrarModal(); // Reutilizamos la lógica de cierre
     
-    // Le ordenamos a la tabla que se refresque
+    // Refrescamos la tabla
     if (this.selectedSucursalId) {
       this.listaPedidos.loadPedidos();
     }
   }
 
+  // --- LÓGICA DE DETALLES (Ya la tenías) ---
   openDetail(pedido: any) {
     this.selectedPedidoDetail = pedido;
   }

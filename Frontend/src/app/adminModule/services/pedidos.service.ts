@@ -31,4 +31,21 @@ export class PedidosService {
   getDetallePedido(pedidoId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${pedidoId}/detalle`, { headers: this.getHeaders() });
   }
+
+  deletePedido(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  }
+
+  updatePedido(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/pedidos/${id}`, data);
+  }
+
+  getDetallesPedido(pedidoId: number) {
+  // Ajusta 'pedido_items' al nombre real de tu tabla intermedia en Supabase
+  // Y asegúrate de traer el precio para que coincida con la interfaz
+  return this.supabase
+    .from('pedido_items')
+    .select('*') 
+    .eq('pedido_id', pedidoId);
+}
 }

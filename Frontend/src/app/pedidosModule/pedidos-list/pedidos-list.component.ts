@@ -48,12 +48,25 @@ export class PedidosListComponent {
 
   // Lógica Frontend para Eliminar
   onDelete(pedido: any) {
-    if(confirm(`¿Estás seguro de eliminar el pedido #${pedido.pedido_id}?`)) {
-       this.deleteRequest.emit(pedido.pedido_id);
+    // Confirmación simple
+    if (confirm(`¿Estás seguro de eliminar el pedido de ${pedido.sucursal_nombre} con fecha ${new Date(pedido.fecha).toLocaleDateString()}?`)) {
+       
+       this.service.deletePedido(pedido.pedido_id).subscribe({
+         next: () => {
+           // Éxito: Solo recargamos la tabla
+           this.loadPedidos(); 
+         },
+         error: (err) => {
+           console.error(err);
+           alert('Error al eliminar. Intenta de nuevo.');
+         }
+       });
     }
   }
 
   onView(pedido: any) {
     this.viewRequest.emit(pedido);
-}
+  }
+
+  
 }
