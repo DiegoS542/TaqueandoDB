@@ -18,6 +18,10 @@ export class GestionProveedoresComponent implements OnInit {
   isEditing = false;
   currentId: number | null = null;
   isLoading = true;
+  showInsumosModal = false;
+  insumosList: any[] = [];
+  selectedProveedorName = '';
+  isLoadingInsumos = false;
 
   constructor(private service: ProveedoresService, private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -71,6 +75,32 @@ export class GestionProveedoresComponent implements OnInit {
         error: (err) => alert(err.error.error || 'No se pudo eliminar')
       });
     }
+  }
+
+  viewInsumos(prov: Proveedor) {
+    // Si tiene 0 insumos, no hacemos nada (o podrías mostrar un alert)
+    if (!prov.total_insumos_surtidos || prov.total_insumos_surtidos === 0) return;
+
+    this.selectedProveedorName = prov.nombre_empresa;
+    this.showInsumosModal = true;
+    this.isLoadingInsumos = true;
+    this.insumosList = []; // Limpiar anterior
+
+    this.service.getInsumosByProveedor(prov.proveedor_id!).subscribe({
+      next: (data) => {
+        this.insumosList = data;
+        this.isLoadingInsumos = false;
+      },
+      error: () => {
+        alert('Error al cargar insumos');
+        this.showInsumosModal = false;
+      }
+    });
+  }
+
+  closeInsumosModal() {
+    this.showInsumosModal = false;
+    this.insumosList = [];
   }
 
   closeModal() { this.showModal = false; }

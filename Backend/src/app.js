@@ -10,6 +10,10 @@ const proveedoresRoutes = require('./routes/proveedores.routes');
 // --- RUTAS NUEVAS AGREGADAS ---
 const ventasRoutes = require('./routes/ventas.routes'); 
 const productosRoutes = require('./routes/productos.routes'); 
+const insumosRoutes = require('./routes/insumos.routes');
+const pedidosRoutes = require('./routes/pedidos.routes');
+
+// const ventasRoutes = require('./routes/ventas.routes'); // Futuro...
 
 const app = express();
 
@@ -26,5 +30,8 @@ app.use('/api/proveedores', proveedoresRoutes);
 // --- REGISTRO DE NUEVAS RUTAS ---
 app.use('/api/ventas', ventasRoutes);       // Habilita: POST /api/ventas, GET /api/ventas
 app.use('/api/productos', productosRoutes); // Habilita: GET /api/productos/venta
+app.use('/api/insumos', insumosRoutes);
+app.use('/api/pedidos', pedidosRoutes);
+// app.use('/api/ventas', ventasRoutes);
 
 module.exports = app;

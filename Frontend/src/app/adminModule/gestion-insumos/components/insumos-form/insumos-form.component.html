@@ -1,0 +1,48 @@
+<div class="modal-backdrop" *ngIf="showModal">
+  <div class="modal-content">
+    <h3>{{ isEditing ? 'Editar Insumo' : 'Nuevo Insumo' }}</h3>
+    
+    <form [formGroup]="insumoForm" (ngSubmit)="submit()">
+      
+      <div class="form-field">
+        <label>Nombre del Insumo</label>
+        
+        <input type="text" 
+               formControlName="nombre" 
+               placeholder="Ej. Cebolla Blanca, Gas LP..."
+               maxlength="20">
+        
+        <div class="error-container">
+            <small class="error-text" *ngIf="insumoForm.get('nombre')?.hasError('required') && insumoForm.get('nombre')?.touched">
+              El nombre es obligatorio.
+            </small>
+            <small class="error-text" *ngIf="insumoForm.get('nombre')?.hasError('maxlength')">
+              Máximo 20 caracteres.
+            </small>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Unidad de Medida</label>
+        <select formControlName="unidad_medida">
+          <option value="Kg">Kilogramo (Kg)</option>
+          <option value="L">Litro (L)</option>
+          <option value="Pz">Pieza (Pz)</option>
+          <option value="Pq">Paquete (Pq)</option>
+          <option value="Lat">Lata (Lat)</option>
+        </select>
+      </div>
+
+      <app-insumo-proveedores
+        [allProveedores]="allProveedores"
+        [asignados]="proveedoresAsignados"
+        (asignadosChange)="proveedoresAsignados = $event">
+      </app-insumo-proveedores>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="insumoForm.invalid">Guardar</button>
+      </div>
+
+    </form>
+  </div>
+</div>

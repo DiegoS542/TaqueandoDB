@@ -1,0 +1,22 @@
+/* Contenedor para alinear el select y el botón */
+.controls-wrapper {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.filter-select {
+  padding: 10px;
+  background-color: var(--primary-dark);
+  color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  min-width: 250px; /* Un poco ancho para que se lea bien el nombre */
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}

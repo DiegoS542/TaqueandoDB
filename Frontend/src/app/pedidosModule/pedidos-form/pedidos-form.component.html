@@ -1,0 +1,80 @@
+<div class="modal-backdrop">
+  <div class="modal-content large-modal">
+    
+    <h3>
+      {{ pedidoEditar ? 'Editar Pedido #' + pedidoEditar.id : 'Nuevo Pedido de Insumos' }}
+    </h3>
+    
+    <form [formGroup]="form" (ngSubmit)="submit()">
+
+      <div class="items-section">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th style="width: 35%;">Insumo</th>
+              <th style="width: 35%;">Proveedor / Costo</th>
+              <th style="width: 20%;">Cantidad</th>
+              <th style="width: 10%;"></th>
+            </tr>
+          </thead>
+          
+          <tbody formArrayName="items">
+            <tr *ngFor="let item of itemsArray.controls; let i = index" [formGroupName]="i">
+              
+              <td>
+                <select formControlName="insumo_obj" class="table-input">
+                  <option [ngValue]="null">-- Elegir Insumo --</option>
+                  <ng-container *ngFor="let ins of insumosCatalogo">
+                    <option *ngIf="ins.proveedores && ins.proveedores.length > 0" [ngValue]="ins">
+                      {{ ins.nombre }} ({{ ins.unidad_medida }})
+                    </option>
+                  </ng-container>
+                </select>
+              </td>
+
+              <td>
+                <select formControlName="proveedor_info" class="table-input">
+                  <option [ngValue]="null">-- Elegir Prov --</option>
+                  <ng-container *ngIf="item.get('insumo_obj')?.value as selectedInsumo">
+                    <option *ngFor="let p of selectedInsumo.proveedores" [ngValue]="p">
+                      {{ p.nombre_empresa }} - ${{ p.precio_compra | number:'1.2-2' }}
+                    </option>
+                  </ng-container>
+                </select>
+              </td>
+
+              <td>
+                <input type="number" formControlName="cantidad" class="table-input" min="0.1" placeholder="Cant">
+              </td>
+
+              <td style="text-align: center;">
+                <button type="button" class="btn-icon delete" (click)="removeItem(i)" tabindex="-1">
+                  &times;
+                </button>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+
+        <button type="button" class="btn-secondary btn-small" (click)="addItem()" style="margin-top: 10px;">
+          + Agregar Renglón
+        </button>
+      </div>
+
+      <div class="total-section">
+        <span>Total Estimado: </span>
+        <strong>${{ totalEstimado | number:'1.2-2' }}</strong>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
+        
+        <button type="submit" class="btn-primary" [disabled]="form.invalid || itemsArray.length === 0">
+          {{ pedidoEditar ? 'Actualizar Pedido' : 'Confirmar Pedido' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

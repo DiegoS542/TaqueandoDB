@@ -1,0 +1,38 @@
+/* Estilo base de la bolita */
+.badge-count {
+  background-color: #4CAF50; /* Verde base */
+  color: white;
+  padding: 5px 12px; /* Un poco más gordito para que sea fácil de atinar */
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.9em;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Rebote suave */
+  display: inline-block; /* Necesario para que el transform funcione */
+  border: 1px solid transparent; /* Para evitar saltos visuales */
+}
+
+/* Estilo cuando es CERO (Aburrido y gris) */
+.badge-count.zero {
+  background-color: #444;
+  color: #888;
+  border: 1px solid #555;
+  cursor: default; /* Flecha normal */
+}
+
+/* Estilo cuando es CLICKEABLE (> 0) */
+.badge-count.clickable {
+  cursor: pointer; /* Manita */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombrita sutil */
+}
+
+/* --- LA MAGIA: HOVER --- */
+.badge-count.clickable:hover {
+  transform: scale(1.15); /* Crece un 15% */
+  background-color: #66BB6A; /* Se pone un verde más brillante */
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.6); /* Resplandor verde (Glow) */
+  color: #fff;
+}
+
+.badge-count.clickable:active {
+  transform: scale(0.95); /* Efecto de "presionar" al hacer click */
+}

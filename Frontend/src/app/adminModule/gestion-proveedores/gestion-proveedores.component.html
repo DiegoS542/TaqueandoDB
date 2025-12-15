@@ -14,6 +14,8 @@
         <tr>
           <th>Empresa</th>
           <th>Contacto</th>
+          <th style="text-align: center;">Insumos</th>
+          <th style="text-align: center;">Rango Costos</th>
           <th class="actions-col">Acciones</th>
         </tr>
       </thead>
@@ -21,6 +23,31 @@
         <tr *ngFor="let prov of proveedores">
           <td>{{ prov.nombre_empresa }}</td>
           <td>{{ prov.contacto }}</td>
+          
+          <td style="text-align: center;">
+  <span class="badge-count" 
+        [class.clickable]="(prov.total_insumos_surtidos ?? 0) > 0"
+        [class.zero]="(prov.total_insumos_surtidos ?? 0) === 0"
+        (click)="viewInsumos(prov)"
+        title="Ver lista de insumos de {{ prov.nombre_empresa }}">
+    
+    {{ prov.total_insumos_surtidos ?? 0 }}
+  
+  </span>
+</td>
+          <td style="text-align: center; font-size: 0.85em; color: #aaa;">
+  
+  <span *ngIf="(prov.total_insumos_surtidos ?? 0) > 0">
+    ${{ (prov.precio_minimo ?? 0) | number:'1.0-0' }} - ${{ (prov.precio_maximo ?? 0) | number:'1.0-0' }}
+  </span>
+
+  <span *ngIf="!prov.total_insumos_surtidos || prov.total_insumos_surtidos === 0">
+    --
+  </span>
+
+</td>
+        
+
           <td class="actions-cell">
             <button class="btn-icon edit" (click)="openModal(prov)">Editar</button>
             <button class="btn-icon delete" (click)="delete(prov.proveedor_id!)">Eliminar</button>
@@ -28,7 +55,7 @@
         </tr>
 
         <tr *ngIf="proveedores.length === 0">
-          <td colspan="3" class="no-data">No hay proveedores registrados.</td>
+          <td colspan="5" class="no-data">No hay proveedores registrados.</td>
         </tr>
       </tbody>
     </table>
@@ -51,8 +78,7 @@
       
       <div class="form-field">
         <label>Nombre de la Empresa</label>
-        <input type="text" formControlName="nombre_empresa" maxlength="30">
-        
+        <input type="text" formControlName="nombre_empresa" placeholder="Ej. Carnes del Norte" maxlength="30">
         <small class="error-text" 
                *ngIf="form.get('nombre_empresa')?.hasError('required') && (form.get('nombre_empresa')?.dirty || form.get('nombre_empresa')?.touched)">
           El nombre es obligatorio.
@@ -61,8 +87,7 @@
 
       <div class="form-field">
         <label>Contacto (Teléfono)</label>
-        <input type="text" formControlName="contacto" placeholder="xxx-xxx-xxxx" maxlength="30">
-        
+        <input type="text" formControlName="contacto" placeholder="Ej. 449-123-4567" maxlength="30">
         <small class="error-text" 
                *ngIf="form.get('contacto')?.hasError('required') && (form.get('contacto')?.dirty || form.get('contacto')?.touched)">
           El contacto es obligatorio.
@@ -75,5 +100,42 @@
       </div>
 
     </form>
+  </div>
+</div>
+<div class="modal-backdrop" *ngIf="showInsumosModal">
+  <div class="modal-content">
+    <h3>Insumos de: <span style="color: var(--accent-color);">{{ selectedProveedorName }}</span></h3>
+    
+    <div class="table-container" style="max-height: 300px; overflow-y: auto; margin-top: 15px;">
+      
+      <table *ngIf="!isLoadingInsumos; else loadingSmall">
+        <thead>
+          <tr>
+            <th>Insumo</th>
+            <th>Unidad</th>
+            <th style="text-align: right;">Costo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of insumosList">
+            <td>{{ item.nombre }}</td>
+            <td><span class="badge" style="background-color: #444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em;">{{ item.unidad_medida }}</span></td>
+            <td style="text-align: right; font-weight: bold;">${{ item.precio_compra | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #loadingSmall>
+        <div class="loading-state">
+          <div class="spinner" style="width: 25px; height: 25px; border-width: 3px;"></div>
+          <small>Cargando lista...</small>
+        </div>
+      </ng-template>
+
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-primary" (click)="closeInsumosModal()">Cerrar</button>
+    </div>
   </div>
 </div>

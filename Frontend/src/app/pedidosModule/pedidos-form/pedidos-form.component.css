@@ -1,0 +1,53 @@
+/* Heredamos estilos globales de modales, aquí ajustamos la tabla interna */
+
+.large-modal {
+  max-width: 850px; /* Hacemos el modal más ancho para que quepa la tabla */
+  width: 95%;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 5px;
+  background-color: rgba(0,0,0,0.2); /* Fondo sutil para diferenciar la tabla */
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.items-table th {
+  text-align: left;
+  font-size: 0.85em;
+  color: #aaa;
+  padding: 10px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(0,0,0,0.1);
+}
+
+.items-table td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.table-input {
+  width: 100%;
+  padding: 8px;
+  background-color: var(--primary-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: white;
+  box-sizing: border-box; /* Importante para que no se desborde */
+}
+
+.total-section {
+  text-align: right;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color);
+  font-size: 1.3em;
+  color: #4CAF50; /* Verde dinero */
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 0.85em;
+}
