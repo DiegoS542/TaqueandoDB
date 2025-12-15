@@ -2,26 +2,26 @@ const db = require("../config/db");
 const { validationResult } = require("express-validator");
 
 exports.listarInsumos = async (req, res) => {
-  const { rol } = req.usuario;
-  if (rol !== "admin") {
-    sucursalId = req.usuario.sucursal_Id;
-  }
-
+  const { rol, sucursal_id } = req.usuario; // Desestructuramos sucursal_id si la necesitamos
   try {
     let query = `
-      SELECT i.insumo_id, i.nombre, i.unidad_medida
-      FROM insumo i
-    `;
-    let params = [];
+   SELECT i.insumo_id, i.nombre, i.unidad_medida
+   FROM insumos i
+  `;
+    let params = []; // La lógica solo aplica si NO eres admin
 
     if (rol !== "admin") {
+      // Usamos la sucursal del token (sucursal_id)
+      const sucursalId = sucursal_id;
+
       query += ` WHERE i.sucursal_id = $1`;
       params.push(sucursalId);
-    }
+    } // Si rol es 'admin', params queda vacío y la query se ejecuta sin WHERE
 
     const result = await db.query(query, params);
     res.json({ data: result.rows });
   } catch (error) {
+    console.error("Error en listarInsumos:", error); // Es crucial ver el error real
     res.status(500).json({ msg: "Error al cargar insumos" });
   }
 };
