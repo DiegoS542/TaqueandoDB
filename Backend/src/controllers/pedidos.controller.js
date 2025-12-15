@@ -111,4 +111,18 @@ const updatePedido = async (req, res) => {
     }
 };
 
-module.exports = { createPedido, getPedidosBySucursal, getDetallePedido, deletePedido, updatePedido };
+// Obtener KPIs del Dashboard
+const getDashboardStats = async (req, res) => {
+    try {
+        // Consultamos la vista que acabamos de crear
+        const response = await db.query('SELECT * FROM vw_dashboard_kpis');
+        
+        // La vista siempre devuelve 1 sola fila
+        res.status(200).json(response.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener estadísticas' });
+    }
+};
+
+module.exports = { createPedido, getPedidosBySucursal, getDetallePedido, deletePedido, updatePedido, getDashboardStats };

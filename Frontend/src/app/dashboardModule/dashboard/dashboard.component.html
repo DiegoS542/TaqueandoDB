@@ -1,1 +1,54 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  
+  <div class="welcome-hero">
+    <div class="hero-text">
+      <h1>¡Hola! 👋</h1>
+      <p>Todo listo en <strong>Taqueando</strong> para el servicio de hoy.</p>
+      <span class="hero-date">{{ fechaActual | date:'EEEE, d MMMM' | titlecase }}</span>
+    </div>
+    <div class="hero-icon">
+      <i class="fas fa-utensils"></i>
+    </div>
+  </div>
+  
+  <h2 class="section-title">
+    <i class="fas fa-fire-alt"></i> Pulso del Negocio
+  </h2>
+  
+  <div class="dashboard-cards">
+    
+    <div class="card money">
+      <div class="card-icon"><i class="fas fa-cash-register"></i></div>
+      <div class="card-info">
+        <h3>Compras Totales</h3>
+        <p>${{ stats.total_gastado | number:'1.0-0' }}</p>
+      </div>
+    </div>
+  
+    <div class="card today">
+      <div class="card-icon"><i class="fas fa-truck-loading"></i></div>
+      <div class="card-info">
+        <h3>Pedidos de Hoy</h3>
+        <p>{{ stats.pedidos_hoy }}</p>
+      </div>
+    </div>
+  
+    <div class="card top-sucursal">
+      <div class="card-icon"><i class="fas fa-star"></i></div>
+      <div class="card-info">
+        <h3>Sucursal Estrella</h3>
+        <p class="small-text">{{ stats.sucursal_lider || 'Esperando datos...' }}</p>
+      </div>
+    </div>
+  
+    <div class="card items">
+      <div class="card-icon"><i class="fas fa-cubes"></i></div>
+      <div class="card-info">
+        <h3>Menú Vigente</h3>
+        <p>{{ stats.variedad_productos }}</p>
+      </div>
+    </div>
+  
+  </div>
+
+</div>

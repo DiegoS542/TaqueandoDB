@@ -1,0 +1,180 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.dashboard-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- HERO BANNER (Cálido y Moderno) --- */
+.welcome-hero {
+  /* Degradado Negro a Gris Oscuro (Muy elegante) */
+  background: linear-gradient(135deg, #1c1c1c 0%, #383838 100%);
+  color: white;
+  padding: 40px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-text h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  font-weight: 800;
+}
+
+.hero-text p {
+  font-size: 1.2rem;
+  margin: 5px 0 15px 0;
+  opacity: 0.9;
+}
+
+.hero-date {
+  background: rgba(255,255,255,0.2);
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Icono decorativo gigante de fondo */
+.hero-icon {
+  font-size: 8rem;
+  opacity: 0.15;
+  transform: rotate(-15deg);
+  margin-right: 20px;
+}
+
+/* --- TÍTULOS DE SECCIÓN --- */
+.section-title {
+  color: #444;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title i {
+  color: #FF512F; /* Color fuego */
+}
+
+/* --- TARJETAS (Más limpias) --- */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  border-bottom: 4px solid transparent; /* Línea de color abajo */
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px; /* Cuadrado redondeado en vez de círculo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-right: 15px;
+  color: white;
+}
+
+/* Colores específicos */
+.money { border-bottom-color: #27ae60; }
+.money .card-icon { background: #E8F8F5; color: #27ae60; } /* Fondo suave, icono fuerte */
+
+.today { border-bottom-color: #e67e22; }
+.today .card-icon { background: #FEF5E7; color: #e67e22; }
+
+.top-sucursal { border-bottom-color: #8e44ad; }
+.top-sucursal .card-icon { background: #F4ECF7; color: #8e44ad; }
+
+.items { border-bottom-color: #c0392b; }
+.items .card-icon { background: #F9EBEA; color: #c0392b; }
+
+.card-info h3 {
+  margin: 0;
+  font-size: 13px;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.card-info p {
+  margin: 5px 0 0 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: #333;
+}
+
+/* --- ACCIONES RÁPIDAS --- */
+.quick-actions-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.action-card {
+  background: white;
+  padding: 15px 25px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+  min-width: 180px;
+}
+
+.action-card:hover:not(.disabled) {
+  background: #FF512F;
+  color: white;
+}
+
+/* Al hacer hover, cambiamos también el color del ícono */
+.action-card:hover:not(.disabled) .icon-circle {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.action-card span {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.action-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

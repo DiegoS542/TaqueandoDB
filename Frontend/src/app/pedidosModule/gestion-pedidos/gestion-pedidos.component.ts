@@ -20,10 +20,16 @@ export class GestionPedidosComponent {
   selectedSucursalId: number | null = null;
   showModal = false;
   
-  // 1. NUEVO: Variable para guardar el pedido que vamos a editar
   pedidoParaEditar: any = null;
 
   selectedPedidoDetail: any = null;
+
+  stats: any = {
+  total_gastado: 0,
+  pedidos_hoy: 0,
+  sucursal_lider: 'N/A',
+  variedad_insumos: 0
+};
 
   constructor(private sucursalesService: SucursalesService) {}
 

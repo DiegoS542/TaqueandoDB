@@ -49,4 +49,8 @@ export class PedidosService {
     // Reutilizamos la lógica HTTP. Si tu backend usa la ruta '/detalle', usamos esa.
     return this.http.get<any[]>(`${this.apiUrl}/${pedidoId}/detalle`, { headers: this.getHeaders() });
   }
+
+  getStats(): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/stats`, { headers: this.getHeaders() });
+}
 }
