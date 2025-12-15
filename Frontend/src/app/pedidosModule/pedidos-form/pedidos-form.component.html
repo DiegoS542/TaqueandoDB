@@ -2,8 +2,8 @@
   <div class="modal-content large-modal">
     
     <h3>
-      {{ pedidoEditar ? 'Editar Pedido #' + pedidoEditar.id : 'Nuevo Pedido de Insumos' }}
-    </h3>
+  {{ pedidoEditar ? 'Editar Pedido' : 'Nuevo Pedido de Insumos' }}
+</h3>
     
     <form [formGroup]="form" (ngSubmit)="submit()">
 
@@ -22,7 +22,11 @@
             <tr *ngFor="let item of itemsArray.controls; let i = index" [formGroupName]="i">
               
               <td>
-                <select formControlName="insumo_obj" class="table-input">
+                <div *ngIf="item.get('es_eliminado')?.value" class="deleted-item-text">
+                  <span style="color: #ff5252; font-weight: bold;">🚫 {{ item.get('nombre_display')?.value }}</span>
+                </div>
+
+                <select *ngIf="!item.get('es_eliminado')?.value" formControlName="insumo_obj" class="table-input">
                   <option [ngValue]="null">-- Elegir Insumo --</option>
                   <ng-container *ngFor="let ins of insumosCatalogo">
                     <option *ngIf="ins.proveedores && ins.proveedores.length > 0" [ngValue]="ins">
@@ -33,7 +37,12 @@
               </td>
 
               <td>
-                <select formControlName="proveedor_info" class="table-input">
+                <div *ngIf="item.get('es_eliminado')?.value" style="color: #888; font-size: 0.9em;">
+                  {{ item.get('proveedor_display')?.value }} <br>
+                  (Histórico: ${{ item.get('precio_display')?.value | number:'1.2-2' }})
+                </div>
+
+                <select *ngIf="!item.get('es_eliminado')?.value" formControlName="proveedor_info" class="table-input">
                   <option [ngValue]="null">-- Elegir Prov --</option>
                   <ng-container *ngIf="item.get('insumo_obj')?.value as selectedInsumo">
                     <option *ngFor="let p of selectedInsumo.proveedores" [ngValue]="p">

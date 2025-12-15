@@ -37,6 +37,7 @@
   <app-pedidos-form 
     *ngIf="showModal"
     [sucursalId]="selectedSucursalId!"
+    [pedidoEditar]="pedidoParaEditar"
     (onClose)="showModal = false"
     (onSave)="handleSave()">
   </app-pedidos-form>

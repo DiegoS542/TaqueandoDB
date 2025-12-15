@@ -8,5 +8,6 @@ router.post('/', verifyToken, controller.createPedido);
 router.get('/sucursal/:sucursalId', verifyToken, controller.getPedidosBySucursal);
 router.get('/:id/detalle', verifyToken, controller.getDetallePedido);
 router.delete('/:id', verifyToken, controller.deletePedido);
+router.put('/:id', verifyToken, controller.updatePedido);
 
 module.exports = router;

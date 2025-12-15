@@ -39,8 +39,8 @@ export class PedidosService {
     return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
-  updatePedido(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, data, { headers: this.getHeaders() });
+  updatePedido(id: number, pedido: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, pedido);
   }
 
   // CORREGIDO: Ahora usa tu API en lugar de conectarse directo a Supabase

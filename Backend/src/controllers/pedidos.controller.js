@@ -90,5 +90,25 @@ const deletePedido = async (req, res) => {
     }
 };
 
+const updatePedido = async (req, res) => {
+    const id = parseInt(req.params.id);
+    const { items } = req.body; 
 
-module.exports = { createPedido, getPedidosBySucursal, getDetallePedido, deletePedido };
+    if (!items || items.length === 0) {
+        return res.status(400).json({ error: 'El pedido no puede quedar vacío' });
+    }
+
+    try {
+        const itemsJson = JSON.stringify(items);
+
+        await db.query('CALL sp_editar_pedido($1, $2)', [id, itemsJson]);
+
+        res.status(200).json({ message: 'Pedido actualizado correctamente via SP' });
+
+    } catch (error) {
+        console.error('Error al actualizar pedido:', error);
+        res.status(500).json({ error: 'Error interno al actualizar el pedido' });
+    }
+};
+
+module.exports = { createPedido, getPedidosBySucursal, getDetallePedido, deletePedido, updatePedido };

@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { InsumosService } from '../../adminModule/services/insumos.service';
 import { PedidosService } from '../../adminModule/services/pedidos.service';
 
 @Component({
   selector: 'app-pedidos-form',
+  standalone: true, // Asumo que es standalone por tus imports
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './pedidos-form.component.html',
   styleUrl: './pedidos-form.component.css'
 })
-export class PedidoFormComponent {
+export class PedidoFormComponent implements OnInit {
   
   @Input() sucursalId!: number;
-  // 1. NUEVO: Recibimos el pedido a editar (puede ser null si es nuevo)
   @Input() pedidoEditar: any | null = null; 
   
   @Output() onClose = new EventEmitter<void>();
@@ -22,6 +22,9 @@ export class PedidoFormComponent {
   form: FormGroup;
   insumosCatalogo: any[] = [];
   totalEstimado = 0;
+
+  // Variable para asegurar que tenemos el ID correcto (pedido_id vs id)
+  currentPedidoId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -33,62 +36,90 @@ export class PedidoFormComponent {
     });
   }
 
-  ngOnInit() {
-    // 2. MODIFICADO: Primero cargamos el catálogo, LUEGO decidimos si llenamos o iniciamos vacío
-    this.insumosService.getInsumos().subscribe(data => {
-      this.insumosCatalogo = data;
-
-      if (this.pedidoEditar) {
-        // Si hay un pedido para editar, llenamos el form con sus datos
-        this.cargarDatosEdicion();
-      } else {
-        // Si es nuevo, agregamos la fila vacía por defecto
-        this.addItem(); 
-      }
-    });
-  }
-
-  // Helper para acceder al Array
   get itemsArray() {
     return this.form.get('items') as FormArray;
   }
 
-  // --- LÓGICA DE EDICIÓN (NUEVO) ---
+  ngOnInit() {
+    // 1. Cargar catálogo de insumos (necesario para los selects)
+    this.insumosService.getInsumos().subscribe(data => {
+      this.insumosCatalogo = data;
 
-  cargarDatosEdicion() {
-    // Asumimos que pedidoEditar tiene una propiedad 'detalles' o 'items'
-    // que es un array con { insumo_id, proveedor_id, cantidad, ... }
-    const itemsDelPedido = this.pedidoEditar.items || []; 
-
-    itemsDelPedido.forEach((item: any) => {
-      
-      // TRUCO: Buscar el objeto COMPLETO en el catálogo usando el ID
-      // Esto es necesario para que el <select> reconozca el valor seleccionado
-      const insumoEncontrado = this.insumosCatalogo.find(ins => ins.insumo_id === item.insumo_id);
-      
-      // Buscar el proveedor dentro de ese insumo (o en tu catálogo general de proveedores)
-      // Ajusta 'proveedores' según cómo venga tu estructura desde la VISTA SQL
-      const proveedorEncontrado = insumoEncontrado?.proveedores?.find((p: any) => p.proveedor_id === item.proveedor_id);
-
-      if (insumoEncontrado && proveedorEncontrado) {
-        const itemGroup = this.fb.group({
-          insumo_obj: [insumoEncontrado, Validators.required],
-          proveedor_info: [proveedorEncontrado, Validators.required], 
-          cantidad: [item.cantidad, [Validators.required, Validators.min(0.1)]]
-        });
-
-        // Suscribirse a cambios igual que en addItem
-        itemGroup.valueChanges.subscribe(() => this.calcularTotal());
+      // 2. Determinar si es EDICIÓN o CREACIÓN
+      if (this.pedidoEditar) {
+        // Normalizamos el ID: A veces viene como 'id', a veces como 'pedido_id'
+        this.currentPedidoId = this.pedidoEditar.pedido_id || this.pedidoEditar.id;
         
-        this.itemsArray.push(itemGroup);
+        console.log("Modo Edición - ID:", this.currentPedidoId);
+
+        // 3. Importante: Vamos al Backend a buscar los detalles frescos
+        if (this.currentPedidoId) {
+          this.cargarDatosEdicion(this.currentPedidoId);
+        }
+      } else {
+        // Modo Creación
+        this.currentPedidoId = null;
+        this.addItem(); // Agregamos fila vacía por defecto
       }
     });
-
-    // Calcular el total inicial con los datos cargados
-    this.calcularTotal();
   }
 
-  // --- LÓGICA DEL CARRITO (IGUAL) ---
+  // --- LÓGICA DE CARGA DE DATOS (NUEVO) ---
+  cargarDatosEdicion(id: number) {
+  this.pedidosService.getDetallePedido(id).subscribe({
+    next: (detalles) => {
+      if (!detalles || detalles.length === 0) {
+        this.addItem();
+        return;
+      }
+
+      detalles.forEach((item: any) => {
+        // CASO A: El insumo fue ELIMINADO o es Histórico
+        // (La vista devuelve 'Eliminado' o el ID viene nulo)
+        if (item.estado_registro === 'Eliminado' || !item.insumo_id) {
+          
+          const itemGroup = this.fb.group({
+            // Marcamos flags especiales para el HTML
+            es_eliminado: [true], 
+            nombre_display: [item.insumo_nombre], // Texto original (ej. "Tomate (ELIMINADO)")
+            proveedor_display: [item.nombre_empresa],
+            precio_display: [item.precio_unitario_compra],
+            
+            // Los controles normales los dejamos en null o con valores base
+            insumo_obj: [null], 
+            proveedor_info: [null],
+            cantidad: [{ value: Number(item.cantidad), disabled: true }] // Deshabilitado para que no lo editen
+          });
+
+          this.itemsArray.push(itemGroup);
+
+        } else {
+          // CASO B: Es un insumo ACTIVO (Lógica normal que ya tenías)
+          const insumoIdBD = Number(item.insumo_id);
+          const proveedorIdBD = Number(item.proveedor_id);
+
+          const insumoEncontrado = this.insumosCatalogo.find(ins => ins.insumo_id == insumoIdBD);
+          const proveedorEncontrado = insumoEncontrado?.proveedores?.find((p: any) => p.proveedor_id == proveedorIdBD);
+
+          if (insumoEncontrado && proveedorEncontrado) {
+            const itemGroup = this.fb.group({
+              es_eliminado: [false], // Flag activo
+              insumo_obj: [insumoEncontrado, Validators.required],
+              proveedor_info: [proveedorEncontrado, Validators.required],
+              cantidad: [Number(item.cantidad), [Validators.required, Validators.min(0.1)]]
+            });
+            itemGroup.valueChanges.subscribe(() => this.calcularTotal());
+            this.itemsArray.push(itemGroup);
+          }
+        }
+      });
+      this.calcularTotal();
+    },
+    error: (err) => { console.error(err); this.addItem(); }
+  });
+}
+
+  // --- LÓGICA DEL FORMULARIO (Mantiene igual) ---
 
   addItem() {
     const itemGroup = this.fb.group({
@@ -107,27 +138,39 @@ export class PedidoFormComponent {
   }
 
   calcularTotal() {
-    this.totalEstimado = this.itemsArray.controls.reduce((acc, control) => {
-      const val = control.value;
+  this.totalEstimado = this.itemsArray.controls.reduce((acc, control) => {
+    const val = control.value; // .value solo trae campos habilitados
+    const rawVal = control.getRawValue(); // .getRawValue trae todo (incluso lo disabled)
+
+    if (rawVal.es_eliminado) {
+      // Si es eliminado, usamos el precio histórico display
+      return acc + (rawVal.precio_display * rawVal.cantidad);
+    } else {
+      // Si es activo, usamos el objeto proveedor
       if (val.proveedor_info && val.cantidad) {
-        // Asegúrate que la propiedad sea precio_compra o precio (según tu DB)
         return acc + (val.proveedor_info.precio_compra * val.cantidad);
       }
-      return acc;
-    }, 0);
-  }
+    }
+    return acc;
+  }, 0);
+}
 
-  // --- GUARDADO (MODIFICADO) ---
+  // --- SUBMIT (CORREGIDO PARA USAR EL STORED PROCEDURE) ---
 
   submit() {
     if (this.form.invalid) return;
-    if (this.itemsArray.length === 0) {
-      alert('El pedido está vacío.');
+
+    // FILTRO: Solo enviamos al backend los items ACTIVOS (que tienen insumo_id válido)
+    // Los eliminados se "pierden" de la edición actual porque no se pueden re-insertar
+    const itemsValidos = this.form.getRawValue().items.filter((i: any) => !i.es_eliminado && i.insumo_obj);
+
+    if (itemsValidos.length === 0) {
+      alert('El pedido debe tener al menos un insumo activo.');
       return;
     }
 
-    const itemsPayload = this.form.value.items.map((i: any) => ({
-        insumo_id: i.insumo_obj.insumo_id, // Ajusta nombres de ID según tu DB
+    const itemsPayload = itemsValidos.map((i: any) => ({
+        insumo_id: i.insumo_obj.insumo_id,
         proveedor_id: i.proveedor_info.proveedor_id,
         cantidad: i.cantidad,
         precio: i.proveedor_info.precio_compra 
@@ -138,23 +181,27 @@ export class PedidoFormComponent {
       items: itemsPayload
     };
 
-    if (this.pedidoEditar) {
-      // 3. EDITAR: Llamamos al update
-      // Asumimos que pedidoEditar tiene el ID del pedido principal
-      this.pedidosService.updatePedido(this.pedidoEditar.id, payload).subscribe({
+    // DECISIÓN: ¿Editar o Crear?
+    if (this.currentPedidoId) {
+      // --- ACTUALIZAR (PUT) ---
+      this.pedidosService.updatePedido(this.currentPedidoId, payload).subscribe({
         next: () => {
+            alert('Pedido actualizado con éxito');
             this.onSave.emit();
             this.onClose.emit();
         },
-        error: (err) => alert('Error al actualizar')
+        error: (err) => {
+          console.error(err);
+          alert('Error al actualizar');
+        }
       });
 
     } else {
-      // 4. CREAR: Lo que ya tenías
+      // --- CREAR (POST) ---
       this.pedidosService.createPedido(payload).subscribe({
         next: () => {
           this.onSave.emit();
-          this.onClose.emit(); // Cerramos también al guardar
+          this.onClose.emit();
         },
         error: (err) => {
           console.error(err);
