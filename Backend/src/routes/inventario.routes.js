@@ -1,29 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const inventarioController = require("../controllers/inventario.controller");
-const sucursalMiddleware = require("../middlewares/sucursal.middleware");
+const verifyToken = require("../middlewares/auth.middleware");
+const sucursalAccess = require("../middlewares/sucursal.middleware");
 
-// GET todos los items (READ ALL)
-router.get("/", sucursalMiddleware, inventarioController.listarInventario);
-
-// GET un item por ID (READ ONE)
-router.get("/:id", sucursalMiddleware, inventarioController.obtenerItemPorId);
-
-// POST crear un nuevo item (CREATE)
-// Ejemplo de ruta con middleware de protección: auth, authorize(['admin', 'gerente'])
-router.post("/", sucursalMiddleware, inventarioController.crearItem);
-
-// PUT actualizar un item completo (UPDATE)
-router.put("/:id", sucursalMiddleware, inventarioController.actualizarItem);
-
-// PATCH actualizar solo el stock (UPDATE PARCIAL)
-router.patch(
-  "/stock/:id",
-  sucursalMiddleware,
-  inventarioController.actualizarStock
+router.get(
+  "/",
+  verifyToken,
+  sucursalAccess,
+  inventarioController.listarInventario
 );
 
-// DELETE eliminar un item
-router.delete("/:id", sucursalMiddleware, inventarioController.eliminarItem);
+router.post(
+  "/",
+  verifyToken,
+  sucursalAccess,
+  inventarioController.crearInventario
+);
+
+router.post(
+  "/detalle",
+  verifyToken,
+  sucursalAccess,
+  inventarioController.guardarDetalleInventario
+);
 
 module.exports = router;

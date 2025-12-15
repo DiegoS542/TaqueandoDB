@@ -2,7 +2,13 @@ const db = require('../config/db');
 
 // 1. Obtener todas las sucursales
 const getSucursales = async (req, res) => {
+    const { rol } = req.usuario;
     try {
+        if(rol === 'gerente'){
+            const response = await db.query('SELECT * FROM sucursales WHERE sucursal_id = $1 ORDER BY sucursal_id ASC', [req.usuario.sucursal_id]);
+            return res.status(200).json(response.rows);
+        }
+
         const response = await db.query('SELECT * FROM sucursales ORDER BY sucursal_id ASC');
         res.status(200).json(response.rows);
     } catch (error) {

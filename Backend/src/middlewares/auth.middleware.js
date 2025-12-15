@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
+  if (req.method === "OPTIONS") {
+    return next();
+  }
+
   const authHeader = req.header("Authorization");
 
   if (!authHeader) {
@@ -24,16 +28,14 @@ const verifyToken = (req, res, next) => {
 
     if (!secret) {
       console.error("JWT_SECRET no está definido en el entorno.");
-      return res
-        .status(500)
-        .json({
-          msg: "Error de configuración del servidor (clave secreta faltante).",
-        });
+      return res.status(500).json({
+        msg: "Error de configuración del servidor (clave secreta faltante).",
+      });
     }
 
     const decoded = jwt.verify(token, secret);
 
-    req.user = decoded;
+    req.usuario = decoded;
 
     next();
   } catch (error) {

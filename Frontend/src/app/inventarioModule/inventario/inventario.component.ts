@@ -1,171 +1,137 @@
-// inventario.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  FormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { TablaInventarioComponent } from '../../core/components/tabla-inventario/tabla-inventario.component';
 import { InventarioService } from '../services/inventario.service';
-import { Producto } from '../../shared/models/producto.model';
-
-// ... (Resto de imports) ...
+import { Insumo } from '../../shared/models/insumo.model';
+import { ApiResponse } from '../../shared/models/ApiResponse.model';
 
 @Component({
   selector: 'app-inventario',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TablaInventarioComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './inventario.component.html',
   styleUrls: ['./inventario.component.css'],
 })
 export class InventarioComponent implements OnInit {
-  productosInventario: Producto[] = [];
-  isLoading: boolean = true;
+  insumos: Insumo[] = [];
+  sucursales: any[] = [];
 
-  showModal: boolean = false;
-  isEditing: boolean = false;
-  itemIdToEdit: string | null = null;
-  itemForm: FormGroup;
-  token: string | null = localStorage.getItem('authToken');
-  consoleLogToken: void = console.log('Token de autenticación:', this.token);
+  inventarioForm: FormGroup;
+  inventarioId: number | null = null;
+
+  isLoading = true;
 
   constructor(
     private fb: FormBuilder,
     private inventarioService: InventarioService
   ) {
-    this.itemForm = this.fb.group({
-      codigo: ['', Validators.required],
-      nombre: ['', Validators.required],
-      tipo: ['P', Validators.required],
-      insumoPrincipal: [''],
-      stockActual: [0, [Validators.required, Validators.min(0)]],
-      unidad: ['', Validators.required],
+    this.inventarioForm = this.fb.group({
       sucursalId: [null, Validators.required],
     });
   }
 
   ngOnInit(): void {
-    this.cargarDatos();
+    this.cargarInsumos();
+    this.cargarSucursales();
   }
 
-  cargarDatos(): void {
+  /* =========================
+     CARGAS
+     ========================= */
+
+  cargarInsumos(): void {
     this.isLoading = true;
 
-    // Usa this.token en la llamada al servicio
-    this.inventarioService.listarInventario(this.token).subscribe({
-      next: (response) => {
-        this.productosInventario = response.data;
+    this.inventarioService.listarInsumos().subscribe({
+      next: (res) => {
+        this.insumos = res.data.map((i) => ({
+          ...i,
+          cantidad: 0,
+        }));
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error('Error al cargar el inventario:', err);
-        this.isLoading = false;
+      error: () => (this.isLoading = false),
+    });
+  }
+
+  cargarSucursales(): void {
+    const rol = localStorage.getItem('rol');
+    const sucursalUsuario = Number(localStorage.getItem('sucursal_id'));
+
+    this.inventarioService.cargarSucursales().subscribe({
+      next: (res) => {
+        this.sucursales = res;
+
+        if (rol === 'GERENTE') {
+          this.inventarioForm.patchValue({
+            sucursalId: sucursalUsuario,
+          });
+          this.inventarioForm.get('sucursalId')?.disable();
+        }
       },
     });
   }
 
-  // ... (openModal y cancel) ...
+  /* =========================
+     CREAR INVENTARIO
+     ========================= */
 
-  submit(): void {
-    if (this.itemForm.invalid) {
-      this.itemForm.markAllAsTouched();
+  crearInventario(): void {
+    if (this.inventarioForm.invalid) {
+      this.inventarioForm.markAllAsTouched();
       return;
     }
 
-    const formValues = this.itemForm.value;
-    const itemData: Producto = {
-      // Aseguramos que sucursalId exista si lo necesitamos
-      // id: this.itemIdToEdit, // Si tu modelo Producto no tiene id, no lo incluyas aquí.
-      codigo: formValues.codigo,
-      nombre: formValues.nombre,
-      insumoPrincipal:
-        formValues.tipo === 'I' ? 'N/A' : formValues.insumoPrincipal,
-      stockActual: formValues.stockActual,
-      unidad: formValues.unidad,
-      sucursalId: formValues.sucursalId,
-      ultimaActualizacion: new Date(),
-    };
+    const sucursalId = this.inventarioForm.value.sucursalId;
 
-    if (this.isEditing && this.itemIdToEdit) {
-      // LLAMADA PUT (Actualizar) - Usa this.token
-      this.inventarioService.actualizarItem(itemData, this.token).subscribe({
-        next: () => {
-          this.cancel();
-          this.cargarDatos();
-        },
-        error: (err) => console.error('Error al actualizar:', err),
-      });
-    } else {
-      // LLAMADA POST (Crear) - Usa this.token
-      this.inventarioService.crearItem(itemData, this.token).subscribe({
-        next: () => {
-          this.cancel();
-          this.cargarDatos();
-        },
-        error: (err) => console.error('Error al crear:', err),
-      });
-    }
+    this.inventarioService.crearInventario(sucursalId).subscribe({
+      next: (res) => {
+        this.inventarioId = res.inventario_id;
+      },
+      error: () => alert('Error al crear inventario'),
+    });
   }
 
-  editItem(producto: Producto): void {
-    this.openModal(true, producto);
-  }
+  /* =========================
+     VALIDACIONES FRONT
+     ========================= */
 
-  eliminarItem(producto: Producto): void {
-    if (!producto.codigo) {
-      console.error('No se puede eliminar: Código faltante.');
-      return;
-    }
-
-    const confirmar = confirm(
-      `¿Estás seguro de que deseas eliminar el ítem "${producto.nombre}"? Esta acción es irreversible.`
+  hayCantidadesValidas(): boolean {
+    return this.insumos.some(
+      (i) => typeof i.cantidad === 'number' && i.cantidad > 0
     );
-    if (confirmar) {
-      // LLAMADA DELETE (Eliminar) - Usa this.token
-      this.inventarioService
-        .eliminarItem(producto.codigo, this.token)
-        .subscribe({
-          next: () => {
-            console.log(`Ítem ${producto.codigo} eliminado con éxito.`);
-            this.cargarDatos();
-          },
-          error: (err) => {
-            console.error('Error al eliminar el ítem:', err);
-            alert('No se pudo eliminar el ítem. Verifique las dependencias.');
-          },
-        });
-    }
   }
 
-  openModal(isEditing: boolean, producto?: Producto): void {
-    // Lógica para abrir y precargar el formulario
-    this.isEditing = isEditing;
-    this.showModal = true;
-    this.itemForm.reset();
+  /* =========================
+     GUARDAR DETALLE
+     ========================= */
 
-    if (isEditing && producto) {
-      this.itemIdToEdit = producto.codigo || null;
-      this.itemForm.patchValue({
-        codigo: producto.codigo,
-        nombre: producto.nombre,
-        tipo: producto.codigo.startsWith('P') ? 'P' : 'I',
-        insumoPrincipal: producto.insumoPrincipal,
-        stockActual: producto.stockActual,
-        unidad: producto.unidad,
-        sucursalId: producto.sucursalId,
+  guardarDetalle(): void {
+    if (!this.inventarioId) return;
+
+    const detalles = this.insumos
+      .filter((i) => i.cantidad && i.cantidad > 0)
+      .map((i) => ({
+        insumo_id: i.insumo_id,
+        cantidad: i.cantidad!,
+      }));
+
+    if (detalles.length === 0) {
+      alert('Debes capturar al menos un insumo');
+      return;
+    }
+
+    this.inventarioService
+      .guardarDetalle(this.inventarioId, detalles)
+      .subscribe({
+        next: () => alert('Inventario guardado correctamente'),
+        error: () => alert('Error al guardar inventario'),
       });
-    } else {
-      this.itemIdToEdit = null;
-      this.itemForm.patchValue({ tipo: 'P', stockActual: 0, sucursalId: null });
-    }
-  }
-
-  cancel(): void {
-    this.showModal = false;
-    this.itemIdToEdit = null;
-    this.itemForm.reset();
   }
 }
