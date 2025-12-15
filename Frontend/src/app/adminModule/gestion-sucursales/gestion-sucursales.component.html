@@ -46,7 +46,7 @@
     <form [formGroup]="sucursalForm" (ngSubmit)="onSubmit()">
       <div class="form-field">
         <label>Nombre de la Sucursal</label>
-        <input type="text" formControlName="nombre" placeholder="Ej. Norte">
+        <input type="text" formControlName="nombre" maxlength="20">
         <small *ngIf="sucursalForm.get('nombre')?.invalid && sucursalForm.get('nombre')?.touched" class="error-text">
           El nombre es requerido
         </small>

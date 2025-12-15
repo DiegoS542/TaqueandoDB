@@ -13,7 +13,7 @@
       </select>
 
       <button class="btn-primary" 
-              (click)="showModal = true" 
+              (click)="abrirModalNuevo()" 
               [disabled]="!selectedSucursalId">
         + Nuevo Pedido
       </button>
@@ -38,7 +38,7 @@
     *ngIf="showModal"
     [sucursalId]="selectedSucursalId!"
     [pedidoEditar]="pedidoParaEditar"
-    (onClose)="showModal = false"
+    (onClose)="cerrarModal()"
     (onSave)="handleSave()">
   </app-pedidos-form>
 

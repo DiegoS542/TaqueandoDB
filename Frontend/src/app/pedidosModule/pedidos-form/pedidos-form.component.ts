@@ -186,7 +186,6 @@ export class PedidoFormComponent implements OnInit {
       // --- ACTUALIZAR (PUT) ---
       this.pedidosService.updatePedido(this.currentPedidoId, payload).subscribe({
         next: () => {
-            alert('Pedido actualizado con éxito');
             this.onSave.emit();
             this.onClose.emit();
         },

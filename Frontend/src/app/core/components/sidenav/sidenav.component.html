@@ -7,7 +7,7 @@
           <span class="nav-text">Tablero</span>
         </a>
       </li>
-      <li *ngIf="usuario">
+      <li *ngIf="usuario && usuario.rol === 'gerente'">
         <a routerLink="/app/ventas" routerLinkActive="active">
           <span class="nav-text">Ventas</span>
         </a>
