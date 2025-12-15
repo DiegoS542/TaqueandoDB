@@ -1,0 +1,82 @@
+<div class="modal-backdrop" *ngIf="showModal">
+    <div class="modal-content">
+  
+      <h3>{{ isEditing ? 'Editar Producto' : 'Nuevo Producto' }}</h3>
+  
+      <form [formGroup]="productoForm" (ngSubmit)="submit()">
+  
+        <!-- Nombre -->
+        <div class="form-field">
+          <label>Nombre del producto</label>
+          <input
+            type="text"
+            formControlName="nombre"
+            placeholder="Ej. Taco Pastor"
+            maxlength="50"
+          />
+  
+          <small class="error-text"
+            *ngIf="productoForm.get('nombre')?.touched && productoForm.get('nombre')?.invalid">
+            El nombre es obligatorio
+          </small>
+        </div>
+  
+        <!-- Descripción -->
+        <div class="form-field">
+          <label>Descripción</label>
+          <textarea
+            formControlName="descripcion"
+            rows="3"
+            placeholder="Describe el producto brevemente">
+          </textarea>
+        </div>
+  
+        <!-- Precio -->
+        <div class="form-field">
+          <label>Precio de venta</label>
+          <input
+            type="number"
+            formControlName="precio_venta"
+            step="0.01"
+            min="0"
+            placeholder="Ej. 49.00"
+          />
+  
+          <small class="error-text"
+            *ngIf="productoForm.get('precio_venta')?.touched && productoForm.get('precio_venta')?.invalid">
+            Precio válido requerido
+          </small>
+        </div>
+  
+        <!-- Categoría -->
+        <div class="form-field">
+          <label>Categoría</label>
+          <select formControlName="categoria">
+            <option value="">Selecciona una categoría</option>
+            <option value="Tacos">Tacos</option>
+            <option value="Burritos">Burritos</option>
+            <option value="Quesadillas">Quesadillas</option>
+            <option value="Platos">Platos</option>
+            <option value="Especialidades">Especialidades</option>
+            <option value="Entradas">Entradas</option>
+            <option value="Tortas">Tortas</option>
+          </select>
+        </div>
+  
+        <!-- Acciones -->
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cancel()">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="productoForm.invalid">
+            Guardar
+          </button>
+        </div>
+  
+      </form>
+    </div>
+  </div>
+  

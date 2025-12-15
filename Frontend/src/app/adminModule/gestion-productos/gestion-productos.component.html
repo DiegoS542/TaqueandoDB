@@ -1,1 +1,25 @@
-<p>gestion-productos works!</p>
+<div class="container">
+
+    <div class="header-section">
+      <h2>Catálogo de Productos</h2>
+      <button class="btn-primary" (click)="handleCreate()">
+        + Nuevo Producto
+      </button>
+    </div>
+  
+    <app-productos-list
+      [productos]="productos"
+      [isLoading]="isLoading"
+      (onEdit)="handleEdit($event)"
+      (onDelete)="handleDelete($event)">
+    </app-productos-list>
+  
+    <app-productos-form
+      [showModal]="showModal"
+      [productoToEdit]="productoToEdit"
+      (onSave)="handleSave($event)"
+      (onCancel)="closeModal()">
+    </app-productos-form>
+  
+  </div>
+  

@@ -1,0 +1,69 @@
+<div class="table-container">
+
+    <table *ngIf="!isLoading; else loadingTemplate">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Precio</th>
+          <th>Categoría</th>
+          <th class="actions-col">Acciones</th>
+        </tr>
+      </thead>
+  
+      <tbody>
+        <tr *ngFor="let item of productos">
+  
+          <!-- Nombre -->
+          <td>{{ item.nombre }}</td>
+  
+          <!-- Descripción con tooltip -->
+          <td>
+            <div class="desc-info">
+              <span class="desc-preview">
+                {{ item.descripcion || 'Sin descripción' }}
+              </span>
+  
+              <div class="tooltip" *ngIf="item.descripcion">
+                {{ item.descripcion }}
+              </div>
+            </div>
+          </td>
+  
+          <!-- Precio -->
+          <td>
+            <span class="badge precio">
+              ${{ item.precio_venta | number:'1.2-2' }}
+            </span>
+          </td>
+  
+          <!-- Categoría -->
+          <td>
+            <span class="badge categoria">
+              {{ item.categoria }}
+            </span>
+          </td>
+  
+          <!-- Acciones -->
+          <td class="actions-cell">
+            <button class="btn-icon edit" (click)="edit(item)">Editar</button>
+            <button class="btn-icon delete" (click)="delete(item.producto_id)">Eliminar</button>
+          </td>
+  
+        </tr>
+  
+        <tr *ngIf="productos.length === 0">
+          <td colspan="5" class="no-data">No hay productos registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <ng-template #loadingTemplate>
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Cargando productos...</p>
+      </div>
+    </ng-template>
+  
+  </div>
+  
