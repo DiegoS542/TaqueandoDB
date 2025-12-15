@@ -3,12 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service'; 
 import { environment } from '../../../environments/environments';
+
 @Injectable({
   providedIn: 'root'
 })
 export class PedidosService {
   private apiUrl = `${environment.apiUrl}/pedidos`;
 
+  // Ya no necesitamos 'supabase' ni 'createClient' aquí
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   // Helper para enviar el Token
@@ -23,11 +25,12 @@ export class PedidosService {
     return this.http.get<any[]>(`${this.apiUrl}/sucursal/${sucursalId}`, { headers: this.getHeaders() });
   }
 
-  // Crear un nuevo pedido (El backend se encarga del cálculo con Cursor)
+  // Crear un nuevo pedido
   createPedido(payload: any): Observable<any> {
     return this.http.post(this.apiUrl, payload, { headers: this.getHeaders() });
   }
 
+  // Obtener detalle (Vía API Backend)
   getDetallePedido(pedidoId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${pedidoId}/detalle`, { headers: this.getHeaders() });
   }
@@ -37,15 +40,13 @@ export class PedidosService {
   }
 
   updatePedido(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/pedidos/${id}`, data);
+    return this.http.put(`${this.apiUrl}/${id}`, data, { headers: this.getHeaders() });
   }
 
-  getDetallesPedido(pedidoId: number) {
-  // Ajusta 'pedido_items' al nombre real de tu tabla intermedia en Supabase
-  // Y asegúrate de traer el precio para que coincida con la interfaz
-  return this.supabase
-    .from('pedido_items')
-    .select('*') 
-    .eq('pedido_id', pedidoId);
-}
+  // CORREGIDO: Ahora usa tu API en lugar de conectarse directo a Supabase
+  // Asumimos que tu backend tiene una ruta para obtener los items
+  getDetallesPedido(pedidoId: number): Observable<any[]> {
+    // Reutilizamos la lógica HTTP. Si tu backend usa la ruta '/detalle', usamos esa.
+    return this.http.get<any[]>(`${this.apiUrl}/${pedidoId}/detalle`, { headers: this.getHeaders() });
+  }
 }
