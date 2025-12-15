@@ -1,0 +1,112 @@
+/* =========================================
+   GRID Y CONTENEDOR
+   ========================================= */
+.product-grid-container {
+  overflow-y: auto;
+  padding-right: 5px;
+  max-height: calc(100vh - 160px);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px; /* Más espacio entre tarjetas */
+}
+
+/* =========================================
+   TARJETAS DE PRODUCTO (BOTONES)
+   ========================================= */
+.product-card {
+  cursor: pointer;
+  background-color: #ffffff !important;
+  border: 1px solid #dee2e6;
+  border-radius: 12px; /* Más redondeado */
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  min-height: 140px; /* Un poco más altas para evitar empalmes */
+  overflow: hidden;
+}
+
+.product-card:hover {
+  border-color: #0d6efd;
+  background-color: #f8f9fa !important;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* --- SOLUCIÓN AL EMPALME DE TEXTOS --- */
+.card-body-custom {
+  padding: 15px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Separa título del precio */
+  align-items: center;
+  gap: 8px; /* Espacio mínimo asegurado entre elementos */
+}
+
+/* TIPOGRAFÍA UNIFICADA (Para Tarjetas y Lista) */
+.text-style-title {
+  color: #000000 !important;
+  font-weight: 800; /* Extra negrita */
+  font-size: 1rem;
+  line-height: 1.2;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+.text-style-subtitle {
+  color: #6c757d !important;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.text-style-price {
+  background-color: #212529 !important;
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 6px 14px;
+  border-radius: 50px;
+}
+
+/* =========================================
+   TICKET / COMANDA
+   ========================================= */
+.ticket-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.ticket-header {
+  background-color: #212529;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.ticket-body {
+  background-color: #fff;
+}
+
+/* Aplicar estilo a los inputs de cantidad para que combinen */
+.btn-qty {
+  border-color: #dee2e6;
+  font-weight: bold;
+}
+.btn-qty:hover {
+  background-color: #e9ecef;
+}
+
+
+.text-style-amount {
+  color: #000000 !important; /* Negro Puro forzado */
+  font-weight: 800; /* Extra Negrita (igual que el nombre del producto) */
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}

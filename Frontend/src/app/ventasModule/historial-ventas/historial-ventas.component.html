@@ -1,1 +1,131 @@
-<p>historial-ventas works!</p>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-white fw-bold">📜 Historial de Ventas</h2>
+    <button class="btn btn-outline-light" (click)="cargarHistorial()">
+      🔄 Actualizar Lista
+    </button>
+  </div>
+
+  @if (cargando) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-light" role="status"></div>
+      <p class="mt-2 text-white">Cargando datos...</p>
+    </div>
+  }
+
+  @if (!cargando) {
+    <div class="card bg-dark border border-secondary shadow-sm">
+      <div class="card-body p-0">
+        <table class="table table-dark table-hover table-striped mb-0 align-middle">
+          <thead>
+            <tr>
+              <th class="py-3 ps-4 text-secondary"># ID</th>
+              <th class="py-3 text-secondary">FECHA</th>
+              <th class="py-3 text-secondary">TOTAL</th>
+              <th class="text-end py-3 pe-4 text-secondary">DETALLES</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of ventas; track v.venta_id) {
+              <tr>
+                <td class="ps-4 fw-bold text-white">#{{ v.venta_id }}</td>
+                <td class="text-light">{{ v.fecha | date:'medium' }}</td>
+                <td>
+                  <span class="badge bg-success fs-6">${{ v.total_venta }}</span>
+                </td>
+                <td class="text-end pe-4">
+                  <button class="btn btn-sm btn-primary fw-bold" (click)="verDetalle(v.venta_id)">
+                    Ver Productos 👁️
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="text-center py-5 text-muted">No hay ventas registradas.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+
+@if (ventaSeleccionada) {
+  <div class="modal-backdrop">
+    <div class="modal-content-custom">
+      
+      <div class="bg-dark text-white p-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold" style="color: white !important;">
+          🧾 Ticket de Venta #{{ ventaSeleccionada.venta_id }}
+        </h5>
+        <button class="btn btn-link text-white text-decoration-none fs-4" (click)="cerrarDetalle()">✖</button>
+      </div>
+
+      <div class="p-4 bg-white">
+        
+        <div class="mb-4">
+          <span class="text-secondary fw-bold text-uppercase small">Fecha de emisión:</span><br>
+          <span class="text-style-title-modal fs-5">
+            {{ ventaSeleccionada.fecha | date:'fullDate' }}
+          </span>
+          <span class="text-muted"> {{ ventaSeleccionada.fecha | date:'shortTime' }}</span>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table modal-table mb-0">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th class="text-center">Cant.</th>
+                <th class="text-end">P. Unit.</th>
+                <th class="text-end">Importe</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of ventaSeleccionada.detalles; track d.producto_id) {
+                <tr>
+                  <td>
+                    <span class="text-style-title-modal">
+                       {{ d.nombre_producto || ('Producto ' + d.producto_id) }}
+                    </span>
+                  </td>
+                  
+                  <td class="text-center">
+                    <span class="text-style-normal-modal">{{ d.cantidad }}</span>
+                  </td>
+                  
+                  <td class="text-end">
+                    <span class="text-style-normal-modal text-muted" style="font-weight: 500;">
+                      ${{ d.precio_unitario_venta }}
+                    </span>
+                  </td>
+                  
+                  <td class="text-end">
+                    <span class="text-style-amount-modal">
+                      ${{ (d.cantidad * d.precio_unitario_venta).toFixed(2) }}
+                    </span>
+                  </td> 
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-end mt-4 pt-3 border-top">
+          <span class="h5 text-muted fw-bold">TOTAL PAGADO:</span>
+          <span class="display-5 fw-bold text-success">
+            ${{ ventaSeleccionada.total_venta }}
+          </span>
+        </div>
+      </div>
+
+      <div class="p-3 bg-light text-end border-top">
+        <button class="btn btn-dark fw-bold px-4 shadow-sm" (click)="cerrarDetalle()">
+          Cerrar Ventana
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

@@ -1,1 +1,122 @@
-<p>registro-venta works!</p>
+<div class="container-fluid h-100 p-3">
+  <div class="row h-100 g-3">
+    
+    <div class="col-md-8 d-flex flex-column">
+      
+      <div class="mb-3">
+        <input type="text" 
+               class="form-control form-control-lg border-0 shadow-sm" 
+               placeholder="🔍 Buscar producto..." 
+               #txtBuscar
+               (keyup)="filtrarProductos(txtBuscar.value)">
+      </div>
+
+      <div class="product-grid-container flex-grow-1">
+        <div class="product-grid">
+          
+          @for (prod of productosFiltrados; track prod.producto_id) {
+            <div class="card product-card h-100" (click)="agregarAlCarrito(prod)">
+              <div class="card-body-custom text-center">
+                
+                <div class="w-100">
+                  <h6 class="text-style-title mb-1">{{ prod.nombre }}</h6>
+                  <small class="text-style-subtitle d-block">{{ prod.categoria }}</small>
+                </div>
+                
+                <span class="badge text-style-price shadow-sm">
+                  ${{ prod.precio_venta }}
+                </span>
+                
+              </div>
+            </div>
+          } @empty {
+            <div class="col-12 text-center text-white mt-5">
+              <h4>No se encontraron productos</h4>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 h-100 pb-4">
+      <div class="card h-100 ticket-card">
+        
+        <div class="ticket-header">
+          📋 TICKET DE VENTA
+        </div>
+        
+        <div class="card-body ticket-body p-0 table-responsive">
+          <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light sticky-top border-bottom">
+              <tr>
+                <th style="width: 30%;" class="ps-3 text-secondary text-uppercase small">Cant.</th>
+                <th class="text-secondary text-uppercase small">Producto</th>
+                <th class="text-end pe-3 text-secondary text-uppercase small">Importe</th>
+                <th style="width: 40px;"></th>
+              </tr>
+            </thead>
+<tbody>
+  @for (item of carrito; track item.producto_id; let i = $index) {
+    <tr>
+      <td class="ps-3">
+        <div class="input-group input-group-sm flex-nowrap" style="width: 90px;">
+          <button class="btn btn-qty btn-outline-dark" (click)="cambiarCantidad(i, -1)">-</button>
+          <span class="input-group-text bg-white px-2 border-secondary fw-bold">{{ item.cantidad }}</span>
+          <button class="btn btn-qty btn-outline-dark" (click)="cambiarCantidad(i, 1)">+</button>
+        </div>
+      </td>
+      
+      <td>
+        <span class="text-style-title d-block text-truncate" style="max-width: 140px; font-size: 0.9rem;">
+          {{ item.nombre }}
+        </span>
+        <small class="text-style-subtitle" style="font-size: 0.7rem;">
+          ${{ item.precio_unitario }} C/U
+        </small>
+      </td>
+      
+      <td class="text-end pe-3 align-middle">
+        <span class="text-style-amount">
+          ${{ item.subtotal.toFixed(2) }}
+        </span>
+      </td>
+      
+      <td class="text-end align-middle">
+        <button class="btn btn-link text-danger p-0 me-2" (click)="eliminarDelCarrito(i)">
+          ✕
+        </button>
+      </td>
+    </tr>
+  } @empty {
+    <tr>
+      <td colspan="4" class="text-center py-5 text-muted">
+        <div class="opacity-50">
+          <i class="bi bi-cart-x fs-1"></i>
+          <p class="mt-2 mb-0">Ticket vacío</p>
+        </div>
+      </td>
+    </tr>
+  }
+</tbody>
+          </table>
+        </div>
+
+        <div class="card-footer bg-white border-top p-3">
+          <div class="d-flex justify-content-between align-items-end mb-3">
+            <span class="text-muted fw-bold">Total a Pagar:</span>
+            <span class="h2 fw-bold text-dark m-0">${{ totalVenta.toFixed(2) }}</span>
+          </div>
+          
+          <button class="btn btn-primary w-100 py-3 fw-bold shadow-sm text-uppercase" 
+                  [disabled]="carrito.length === 0"
+                  style="letter-spacing: 1px;"
+                  (click)="guardarVenta()">
+            💾 Registrar Venta
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

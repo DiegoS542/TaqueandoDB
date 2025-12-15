@@ -1,0 +1,96 @@
+/* =========================================
+   ESTILOS GENERALES Y FONDO
+   ========================================= */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro más fuerte */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  backdrop-filter: blur(3px);
+}
+
+.modal-content-custom {
+  background: #ffffff; /* Fondo BLANCO para la tarjeta */
+  width: 90%;
+  max-width: 750px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  animation: slideIn 0.2s ease-out;
+  color: #000000 !important; /* <--- FORZAR NEGRO EN EL CONTENEDOR */
+}
+
+@keyframes slideIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* =========================================
+   ESTILOS DE TEXTO (IGUALES AL REGISTRO)
+   ========================================= */
+
+/* 1. TÍTULO / PRODUCTO (Negro, Muy Grueso) */
+.text-style-title-modal {
+  color: #000000 !important;
+  font-weight: 800; /* Extra Bold */
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  text-transform: capitalize;
+}
+
+/* 2. SUBTÍTULOS / CANTIDAD (Gris oscuro, Grueso) */
+.text-style-normal-modal {
+  color: #212529 !important; /* Gris muy oscuro, casi negro */
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* 3. IMPORTES / DINERO (Negro, Muy Grueso) */
+.text-style-amount-modal {
+  color: #000000 !important;
+  font-weight: 900; /* Black font */
+  font-size: 1.1rem;
+}
+
+/* =========================================
+   TABLA DEL MODAL (CORRECCIONES DE COLOR)
+   ========================================= */
+.modal-table {
+  background-color: #ffffff !important;
+  width: 100%;
+}
+
+.modal-table thead th {
+  background-color: #212529 !important; /* Encabezado negro */
+  color: #ffffff !important; /* Texto blanco SOLO en encabezado */
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  padding: 12px;
+  letter-spacing: 1px;
+  border: none;
+}
+
+.modal-table tbody tr {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-table td {
+  padding: 15px 10px;
+  vertical-align: middle;
+  background-color: #ffffff !important; /* Fondo blanco forzado en celdas */
+}
+
+/* REGLA DE SEGURIDAD: */
+/* Forza a que cualquier texto dentro del cuerpo del modal sea negro si no tiene clase específica */
+.modal-content-custom div, 
+.modal-content-custom p, 
+.modal-content-custom span, 
+.modal-content-custom td {
+  color: #000000;
+}
