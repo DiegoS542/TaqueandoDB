@@ -1,1 +1,31 @@
-<p>ventas works!</p>
+<div class="container-fluid p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <h2 class="text-dark">Gestión de Ventas</h2>
+    
+    <div class="btn-group" role="group">
+      <button type="button" 
+              class="btn" 
+              [ngClass]="vistaActual === 'registro' ? 'btn-primary' : 'btn-outline-primary'"
+              (click)="cambiarVista('registro')">
+         ➕ Nueva Venta
+      </button>
+      
+      <button type="button" 
+              class="btn" 
+              [ngClass]="vistaActual === 'historial' ? 'btn-primary' : 'btn-outline-primary'"
+              (click)="cambiarVista('historial')">
+        📜 Historial
+      </button>
+    </div>
+  </div>
+
+  <div class="contenido-ventas">
+    
+    @if (vistaActual === 'registro') {
+      <app-registro-venta></app-registro-venta>
+    } @else {
+      <app-historial-ventas></app-historial-ventas>
+    }
+
+  </div>
+</div>
