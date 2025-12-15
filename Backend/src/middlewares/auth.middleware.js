@@ -1,45 +1,44 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-/**
- * Middleware para verificar el JWT en las peticiones protegidas.
- * Se espera que el token venga en el header 'Authorization' con el formato:
- * Bearer <token>
- */
 const verifyToken = (req, res, next) => {
-    // 1. Obtener el header de autorización
-    const authHeader = req.headers['authorization'];
+  const authHeader = req.header("Authorization");
 
-    // 2. Verificar si el header existe
-    if (!authHeader) {
-        return res.status(403).json({ error: 'Acceso denegado: No se proporcionó un token.' });
+  if (!authHeader) {
+    return res
+      .status(401)
+      .json({ msg: "Acceso denegado. No se proporcionó un token." });
+  }
+
+  const parts = authHeader.split(" ");
+
+  if (parts.length !== 2 || parts[0] !== "Bearer") {
+    return res
+      .status(401)
+      .json({ msg: "Formato de token inválido. Debe ser Bearer <token>." });
+  }
+
+  const token = parts[1];
+
+  try {
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+      console.error("JWT_SECRET no está definido en el entorno.");
+      return res
+        .status(500)
+        .json({
+          msg: "Error de configuración del servidor (clave secreta faltante).",
+        });
     }
 
-    // 3. Extraer el token quitando la palabra "Bearer "
-    // El formato estándar es "Bearer eyJhbGci..."
-    // split(' ') separa en ['Bearer', 'token'] y tomamos el índice [1]
-    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, secret);
 
-    if (!token) {
-        return res.status(403).json({ error: 'Acceso denegado: Formato de token incorrecto.' });
-    }
+    req.user = decoded;
 
-    try {
-        // 4. Verificar el token usando la clave secreta
-        const secret = process.env.JWT_SECRET;
-        const decoded = jwt.verify(token, secret);
-
-        // 5. ¡Token Válido! Inyectamos los datos del usuario en la request (req)
-        // Ahora, cualquier controlador que se ejecute después de esto
-        // podrá acceder a req.user.usuario_id, req.user.rol, etc.
-        req.user = decoded;
-
-        // 6. Continuar con la siguiente función (el controlador o el siguiente middleware)
-        next();
-
-    } catch (error) {
-        // Si el token expiró o la firma no coincide, jwt.verify lanza un error
-        return res.status(401).json({ error: 'Token inválido o expirado.' });
-    }
+    next();
+  } catch (error) {
+    return res.status(401).json({ msg: "Token no válido o expirado." });
+  }
 };
 
 module.exports = verifyToken;

@@ -1,3 +1,5 @@
+// inventario.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -7,31 +9,33 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TablaInventarioComponent } from '../../core/components/tabla-inventario/tabla-inventario.component';
-// Asumo que tu interfaz Producto es esta, definida en '../../shared/models/producto.model'
+import { InventarioService } from '../services/inventario.service';
 import { Producto } from '../../shared/models/producto.model';
 
-// 1. Interfaz extendida para el Contexto del Inventario (UI y Backend)
-// Usamos esto para el array principal y el formulario, ya que la gestión requiere ID y Sucursal
+// ... (Resto de imports) ...
 
 @Component({
   selector: 'app-inventario',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TablaInventarioComponent],
   templateUrl: './inventario.component.html',
-  styleUrl: './inventario.component.css',
+  styleUrls: ['./inventario.component.css'],
 })
 export class InventarioComponent implements OnInit {
-  // Usamos la interfaz extendida para el array principal
   productosInventario: Producto[] = [];
   isLoading: boolean = true;
 
-  // --- Propiedades del Modal ---
   showModal: boolean = false;
   isEditing: boolean = false;
   itemIdToEdit: string | null = null;
   itemForm: FormGroup;
+  token: string | null = localStorage.getItem('authToken');
+  consoleLogToken: void = console.log('Token de autenticación:', this.token);
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private inventarioService: InventarioService
+  ) {
     this.itemForm = this.fb.group({
       codigo: ['', Validators.required],
       nombre: ['', Validators.required],
@@ -44,42 +48,100 @@ export class InventarioComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cargarDatosEjemplo();
+    this.cargarDatos();
   }
 
-  cargarDatosEjemplo(): void {
+  cargarDatos(): void {
     this.isLoading = true;
-    setTimeout(() => {
-      const ahora = new Date();
 
-      this.productosInventario = [
-        {
-          codigo: 'P001',
-          nombre: 'Taco de Pastor',
-          insumoPrincipal: 'Carne de cerdo (Pastor)',
-          stockActual: 500,
-          unidad: 'Und',
-          sucursalId: 1,
-          ultimaActualizacion: new Date(ahora.getTime() - 60 * 60 * 1000),
-        },
-        {
-          codigo: 'I005',
-          nombre: 'Tortillas de Maíz',
-          insumoPrincipal: 'Maíz',
-          stockActual: 25,
-          unidad: 'Kg',
-          sucursalId: 2,
-          ultimaActualizacion: new Date(ahora.getTime() - 30 * 60 * 1000),
-        },
-      ];
-      this.isLoading = false;
-    }, 500);
+    // Usa this.token en la llamada al servicio
+    this.inventarioService.listarInventario(this.token).subscribe({
+      next: (response) => {
+        this.productosInventario = response.data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar el inventario:', err);
+        this.isLoading = false;
+      },
+    });
   }
 
-  // --- MÉTODOS DEL MODAL (CRUD UI) ---
+  // ... (openModal y cancel) ...
 
-  // Usamos InventarioItem en la definición para asegurar que tenemos ID
+  submit(): void {
+    if (this.itemForm.invalid) {
+      this.itemForm.markAllAsTouched();
+      return;
+    }
+
+    const formValues = this.itemForm.value;
+    const itemData: Producto = {
+      // Aseguramos que sucursalId exista si lo necesitamos
+      // id: this.itemIdToEdit, // Si tu modelo Producto no tiene id, no lo incluyas aquí.
+      codigo: formValues.codigo,
+      nombre: formValues.nombre,
+      insumoPrincipal:
+        formValues.tipo === 'I' ? 'N/A' : formValues.insumoPrincipal,
+      stockActual: formValues.stockActual,
+      unidad: formValues.unidad,
+      sucursalId: formValues.sucursalId,
+      ultimaActualizacion: new Date(),
+    };
+
+    if (this.isEditing && this.itemIdToEdit) {
+      // LLAMADA PUT (Actualizar) - Usa this.token
+      this.inventarioService.actualizarItem(itemData, this.token).subscribe({
+        next: () => {
+          this.cancel();
+          this.cargarDatos();
+        },
+        error: (err) => console.error('Error al actualizar:', err),
+      });
+    } else {
+      // LLAMADA POST (Crear) - Usa this.token
+      this.inventarioService.crearItem(itemData, this.token).subscribe({
+        next: () => {
+          this.cancel();
+          this.cargarDatos();
+        },
+        error: (err) => console.error('Error al crear:', err),
+      });
+    }
+  }
+
+  editItem(producto: Producto): void {
+    this.openModal(true, producto);
+  }
+
+  eliminarItem(producto: Producto): void {
+    if (!producto.codigo) {
+      console.error('No se puede eliminar: Código faltante.');
+      return;
+    }
+
+    const confirmar = confirm(
+      `¿Estás seguro de que deseas eliminar el ítem "${producto.nombre}"? Esta acción es irreversible.`
+    );
+    if (confirmar) {
+      // LLAMADA DELETE (Eliminar) - Usa this.token
+      this.inventarioService
+        .eliminarItem(producto.codigo, this.token)
+        .subscribe({
+          next: () => {
+            console.log(`Ítem ${producto.codigo} eliminado con éxito.`);
+            this.cargarDatos();
+          },
+          error: (err) => {
+            console.error('Error al eliminar el ítem:', err);
+            alert('No se pudo eliminar el ítem. Verifique las dependencias.');
+          },
+        });
+    }
+  }
+
   openModal(isEditing: boolean, producto?: Producto): void {
+    // Lógica para abrir y precargar el formulario
     this.isEditing = isEditing;
     this.showModal = true;
     this.itemForm.reset();
@@ -105,39 +167,5 @@ export class InventarioComponent implements OnInit {
     this.showModal = false;
     this.itemIdToEdit = null;
     this.itemForm.reset();
-  }
-
-  submit(): void {
-    if (this.itemForm.invalid) {
-      this.itemForm.markAllAsTouched();
-      return;
-    }
-
-    const formValues = this.itemForm.value;
-
-    const itemData: Producto = {
-      codigo: formValues.codigo,
-      nombre: formValues.nombre,
-      insumoPrincipal:
-        formValues.tipo === 'I' ? 'N/A' : formValues.insumoPrincipal,
-      stockActual: formValues.stockActual,
-      unidad: formValues.unidad,
-      sucursalId: formValues.sucursalId,
-      ultimaActualizacion: new Date(),
-    };
-
-    // Aquí iría la llamada a tu servicio para POST o PUT
-    console.log(
-      this.isEditing ? 'Llamada PUT (Actualizar):' : 'Llamada POST (Crear):',
-      itemData
-    );
-
-    this.cancel();
-    this.cargarDatosEjemplo();
-  }
-
-  // Usamos InventarioItem en la definición para que el tipo sea correcto
-  editItem(producto: Producto): void {
-    this.openModal(true, producto);
   }
 }

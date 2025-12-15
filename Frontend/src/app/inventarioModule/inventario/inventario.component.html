@@ -1,92 +1,125 @@
 <div class="container">
-    <div class="header-section">
-        <h1>📦 Gestión de Inventario</h1>
-        <button class="btn-primary" (click)="openModal(false)">
-            + Agregar Producto
-        </button>
-    </div>
-    
-    <app-tabla-inventario 
-        [productosInventario]="productosInventario" 
-        [isLoading]="isLoading"
-        (editItem)="editItem($event)" 
-    />
+  <div class="header-section">
+    <h1>Gestión de Inventario</h1>
+    <button class="btn-primary" (click)="openModal(false)">
+      + Agregar Producto
+    </button>
+  </div>
+
+  <app-tabla-inventario
+    [productosInventario]="productosInventario"
+    [isLoading]="isLoading"
+    (editItem)="editItem($event)"
+    (deleteItem)="eliminarItem($event)"
+  />
 </div>
 
 <div class="modal-backdrop" *ngIf="showModal">
-    <div class="modal-content">
-        <h3>{{ isEditing ? 'Editar Ítem' : 'Nuevo Ítem de Inventario' }}</h3>
-        
-        <form [formGroup]="itemForm" (ngSubmit)="submit()">
-            
-            <div class="form-row">
-                <div class="form-field half">
-                    <label>Tipo de Ítem</label>
-                    <select formControlName="tipo">
-                        <option value="P">Producto Terminado</option>
-                        <option value="I">Insumo / Materia Prima</option>
-                    </select>
-                </div>
-                <div class="form-field half">
-                    <label>Código</label>
-                    <input type="text" formControlName="codigo" maxlength="10">
-                    <small class="error-text" *ngIf="itemForm.get('codigo')?.hasError('required') && (itemForm.get('codigo')?.dirty || itemForm.get('codigo')?.touched)">
-                        El código es obligatorio.
-                    </small>
-                </div>
-            </div>
+  <div class="modal-content">
+    <h3>{{ isEditing ? "Editar Ítem" : "Nuevo Ítem de Inventario" }}</h3>
 
-            <div class="form-field">
-                <label>Nombre</label>
-                <input type="text" formControlName="nombre" maxlength="100">
-                <small class="error-text" *ngIf="itemForm.get('nombre')?.hasError('required') && (itemForm.get('nombre')?.dirty || itemForm.get('nombre')?.touched)">
-                    El nombre es obligatorio.
-                </small>
-            </div>
+    <form [formGroup]="itemForm" (ngSubmit)="submit()">
+      <div class="form-row">
+        <div class="form-field half">
+          <label>Tipo de Ítem</label>
+          <select formControlName="tipo">
+            <option value="P">Producto Terminado</option>
+            <option value="I">Insumo / Materia Prima</option>
+          </select>
+        </div>
+        <div class="form-field half">
+          <label>Código</label>
+          <input type="text" formControlName="codigo" maxlength="10" />
+          <small
+            class="error-text"
+            *ngIf="
+              itemForm.get('codigo')?.hasError('required') &&
+              (itemForm.get('codigo')?.dirty || itemForm.get('codigo')?.touched)
+            "
+          >
+            El código es obligatorio.
+          </small>
+        </div>
+      </div>
 
-            <div class="form-row">
-                <div class="form-field half">
-                    <label>Stock Inicial</label>
-                    <input type="number" formControlName="stockActual" min="0">
-                    <small class="error-text" *ngIf="itemForm.get('stockActual')?.hasError('required') && itemForm.get('stockActual')?.touched">
-                        Stock requerido.
-                    </small>
-                    <small class="error-text" *ngIf="itemForm.get('stockActual')?.hasError('min')">
-                        No puede ser negativo.
-                    </small>
-                </div>
-                <div class="form-field half">
-                    <label>Unidad (Ej: Kg, Und, Lts)</label>
-                    <input type="text" formControlName="unidad" maxlength="10">
-                    <small class="error-text" *ngIf="itemForm.get('unidad')?.hasError('required')">
-                        La unidad es requerida.
-                    </small>
-                </div>
-            </div>
+      <div class="form-field">
+        <label>Nombre</label>
+        <input type="text" formControlName="nombre" maxlength="100" />
+        <small
+          class="error-text"
+          *ngIf="
+            itemForm.get('nombre')?.hasError('required') &&
+            (itemForm.get('nombre')?.dirty || itemForm.get('nombre')?.touched)
+          "
+        >
+          El nombre es obligatorio.
+        </small>
+      </div>
 
-            <div class="form-field">
-                <label>Sucursal Asignada</label>
-                <select formControlName="sucursalId">
-                    <option [ngValue]="null" disabled>-- Selecciona --</option>
-                    <option value="suc-a">Sucursal Central</option>
-                    <option value="suc-b">Sucursal Norte</option>
-                </select>
-                <small class="error-text" *ngIf="itemForm.get('sucursalId')?.hasError('required')">
-                    La sucursal es obligatoria.
-                </small>
-            </div>
-            
-            <div class="form-field" *ngIf="itemForm.get('tipo')?.value === 'P'">
-                <label>Insumo Principal (Opcional)</label>
-                <input type="text" formControlName="insumoPrincipal" placeholder="Ej: Carne de Pastor">
-            </div>
+      <div class="form-row">
+        <div class="form-field half">
+          <label>Stock Inicial</label>
+          <input type="number" formControlName="stockActual" min="0" />
+          <small
+            class="error-text"
+            *ngIf="
+              itemForm.get('stockActual')?.hasError('required') &&
+              itemForm.get('stockActual')?.touched
+            "
+          >
+            Stock requerido.
+          </small>
+          <small
+            class="error-text"
+            *ngIf="itemForm.get('stockActual')?.hasError('min')"
+          >
+            No puede ser negativo.
+          </small>
+        </div>
+        <div class="form-field half">
+          <label>Unidad (Ej: Kg, Und, Lts)</label>
+          <input type="text" formControlName="unidad" maxlength="10" />
+          <small
+            class="error-text"
+            *ngIf="itemForm.get('unidad')?.hasError('required')"
+          >
+            La unidad es requerida.
+          </small>
+        </div>
+      </div>
 
-            <div class="modal-actions">
-                <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
-                <button type="submit" class="btn-primary" [disabled]="itemForm.invalid">
-                    {{ isEditing ? 'Guardar Cambios' : 'Crear Ítem' }}
-                </button>
-            </div>
-        </form>
-    </div>
+      <div class="form-field">
+        <label>Sucursal Asignada</label>
+        <select formControlName="sucursalId">
+          <option [ngValue]="null" disabled>-- Selecciona --</option>
+          <option value="suc-a">Sucursal Central</option>
+          <option value="suc-b">Sucursal Norte</option>
+        </select>
+        <small
+          class="error-text"
+          *ngIf="itemForm.get('sucursalId')?.hasError('required')"
+        >
+          La sucursal es obligatoria.
+        </small>
+      </div>
+
+      <div class="form-field" *ngIf="itemForm.get('tipo')?.value === 'P'">
+        <label>Insumo Principal (Opcional)</label>
+        <input
+          type="text"
+          formControlName="insumoPrincipal"
+          placeholder="Ej: Carne de Pastor"
+        />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="itemForm.invalid">
+          {{ isEditing ? "Guardar Cambios" : "Crear Ítem" }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
