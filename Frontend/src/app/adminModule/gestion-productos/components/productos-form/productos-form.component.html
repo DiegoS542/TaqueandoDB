@@ -62,6 +62,15 @@
             <option value="Tortas">Tortas</option>
           </select>
         </div>
+
+        <div class="form-field">
+            <label>Estado del Producto</label>
+            <select formControlName="activo">
+              <option [ngValue]="true">Activo</option>
+              <option [ngValue]="false">Inactivo</option>
+            </select>
+          </div>
+          
   
         <!-- Acciones -->
         <div class="modal-actions">

@@ -66,3 +66,13 @@
     opacity: 1;
   }
   
+  .badge.activo {
+    background: #2e7d32;
+    color: white;
+  }
+  
+  .badge.inactivo {
+    background: #c62828;
+    color: white;
+  }
+  

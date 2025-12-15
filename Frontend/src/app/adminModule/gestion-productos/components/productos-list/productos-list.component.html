@@ -7,6 +7,7 @@
           <th>Descripción</th>
           <th>Precio</th>
           <th>Categoría</th>
+          <th>Estado</th>
           <th class="actions-col">Acciones</th>
         </tr>
       </thead>
@@ -44,6 +45,11 @@
             </span>
           </td>
   
+          <td>
+            <span class="badge activo" *ngIf="item.activo">Activo</span>
+            <span class="badge inactivo" *ngIf="!item.activo">Inactivo</span>
+          </td>
+          
           <!-- Acciones -->
           <td class="actions-cell">
             <button class="btn-icon edit" (click)="edit(item)">Editar</button>

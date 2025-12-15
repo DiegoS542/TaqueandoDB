@@ -18,7 +18,11 @@ export interface Producto {
 })
 export class ProductosService {
 
-  private apiUrl = `${environment.apiUrl}/productos/venta`;
+  // 🔐 RUTAS ADMIN (CRUD)
+  private adminUrl = `${environment.apiUrl}/productos`;
+
+  // 🛒 RUTA VENTAS (SOLO LECTURA)
+  private ventaUrl = `${environment.apiUrl}/productos/venta`;
 
   constructor(
     private http: HttpClient,
@@ -27,35 +31,43 @@ export class ProductosService {
 
   private getHeaders(): HttpHeaders {
     return new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      Authorization: `Bearer ${this.authService.getToken()}`
     });
   }
 
   // =============================
-  // CRUD DE PRODUCTOS
+  // ADMIN - CRUD PRODUCTOS
   // =============================
 
   getProductos(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(this.apiUrl, {
+    return this.http.get<Producto[]>(this.adminUrl, {
       headers: this.getHeaders()
     });
   }
 
   createProducto(producto: any): Observable<any> {
-    return this.http.post(this.apiUrl, producto, {
+    return this.http.post(this.adminUrl, producto, {
       headers: this.getHeaders()
     });
   }
 
   updateProducto(id: number, producto: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, producto, {
+    return this.http.put(`${this.adminUrl}/${id}`, producto, {
       headers: this.getHeaders()
     });
   }
 
   deleteProducto(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
+    return this.http.delete<void>(`${this.adminUrl}/${id}`, {
       headers: this.getHeaders()
     });
+  }
+
+  // =============================
+  // VENTAS - SOLO CONSULTA
+  // =============================
+
+  getProductosVenta(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(this.ventaUrl);
   }
 }

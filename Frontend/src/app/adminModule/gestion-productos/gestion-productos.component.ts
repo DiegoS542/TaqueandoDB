@@ -63,11 +63,16 @@ export class GestionProductosComponent implements OnInit {
   }
 
   handleDelete(id: number) {
-    if (confirm('¿Eliminar este producto?')) {
-      this.productosService.deleteProducto(id)
-        .subscribe(() => this.loadData());
+    if (confirm('¿Deseas desactivar este producto?')) {
+      this.productosService.deleteProducto(id).subscribe({
+        next: () => {
+          this.loadData(); // 🔥 vuelve a pedir la lista
+        },
+        error: () => alert('No se pudo desactivar el producto')
+      });
     }
   }
+  
 
   closeModal() {
     this.showModal = false;

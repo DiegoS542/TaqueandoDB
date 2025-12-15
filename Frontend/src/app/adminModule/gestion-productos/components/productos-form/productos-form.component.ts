@@ -39,7 +39,8 @@ export class ProductosFormComponent implements OnChanges {
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
       descripcion: [''],
       precio_venta: [0, [Validators.required, Validators.min(0.01)]],
-      categoria: ['']
+      categoria: [''],
+      activo: [true]
     });
   }
 

@@ -12,7 +12,6 @@ const getProductos = async (req, res) => {
     `;
     const response = await db.query(query);
     res.status(200).json(response.rows);
-
   } catch (error) {
     console.error('Error al obtener productos:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
@@ -32,7 +31,6 @@ const obtenerProductosVenta = async (req, res) => {
     `;
     const response = await db.query(query);
     res.status(200).json(response.rows);
-
   } catch (error) {
     console.error('Error al obtener productos de venta:', error);
     res.status(500).json({ message: 'Error interno al cargar productos' });
@@ -63,7 +61,6 @@ const createProducto = async (req, res) => {
     ]);
 
     res.status(201).json(response.rows[0]);
-
   } catch (error) {
     console.error('Error al crear producto:', error);
     res.status(500).json({ error: 'Error al crear producto' });
@@ -71,11 +68,19 @@ const createProducto = async (req, res) => {
 };
 
 // ==============================
-// ACTUALIZAR PRODUCTO
+// ACTUALIZAR PRODUCTO (INCLUYE ESTADO)
 // ==============================
 const updateProducto = async (req, res) => {
   const id = parseInt(req.params.id);
   const { nombre, descripcion, precio_venta, categoria, activo } = req.body;
+
+  // 🔥 NORMALIZAR BOOLEAN (FIX ERROR 500)
+  const activoBool =
+    activo === true || activo === 'true'
+      ? true
+      : activo === false || activo === 'false'
+      ? false
+      : null;
 
   try {
     const query = `
@@ -94,7 +99,7 @@ const updateProducto = async (req, res) => {
       descripcion,
       precio_venta,
       categoria,
-      activo,
+      activoBool,
       id
     ]);
 
@@ -103,7 +108,6 @@ const updateProducto = async (req, res) => {
     }
 
     res.status(200).json(response.rows[0]);
-
   } catch (error) {
     console.error('Error al actualizar producto:', error);
     res.status(500).json({ error: 'Error al actualizar producto' });
@@ -111,26 +115,25 @@ const updateProducto = async (req, res) => {
 };
 
 // ==============================
-// ELIMINAR PRODUCTO (BORRADO LÓGICO)
+// ELIMINAR PRODUCTO (BORRADO FÍSICO)
 // ==============================
 const deleteProducto = async (req, res) => {
   const id = parseInt(req.params.id);
 
   try {
     const query = `
-      UPDATE productos
-      SET activo = false
+      DELETE FROM productos
       WHERE producto_id = $1
       RETURNING *
     `;
+
     const response = await db.query(query, [id]);
 
     if (response.rows.length === 0) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
-    res.status(200).json({ message: 'Producto desactivado correctamente' });
-
+    res.status(200).json({ message: 'Producto eliminado definitivamente' });
   } catch (error) {
     console.error('Error al eliminar producto:', error);
     res.status(500).json({ error: 'Error interno al eliminar producto' });
